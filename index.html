@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+═══════════════════════════════════════════════════════════════════════
+FORBIDDEN GNOSIS ONE-PAGER — DEPLOYMENT GUIDE
+Timestamp: 12-20-2025
+═══════════════════════════════════════════════════════════════════════
+
+STEP 0: UPDATE CONVERTKIT FORM ID (REQUIRED)
+────────────────────────────────────────────────────────────────────────
+Find line 382 in this file and replace:
+  const CK_FORM_ID = 'YOUR_CONVERTKIT_FORM_ID';
+
+With your actual ConvertKit form ID (numbers only).
+
+To find your form ID:
+  1. Log into ConvertKit
+  2. Go to Forms → Select your form
+  3. Look at the URL: app.convertkit.com/forms/[FORM_ID]/...
+  4. Copy those numbers and paste them in
+
+Example: const CK_FORM_ID = '1234567';
+
+WITHOUT THIS, signups won't work.
+
+═══════════════════════════════════════════════════════════════════════
+DEPLOYMENT: GITHUB → NETLIFY (STATIC SITE)
+═══════════════════════════════════════════════════════════════════════
+
+STEP 1: CREATE PROJECT FOLDER
+────────────────────────────────────────────────────────────────────────
+PowerShell commands:
+
+  mkdir forbiddengnosis-site
+  cd forbiddengnosis-site
+  copy /Y "C:\path\to\forbidden-gnosis.html" ".\index.html"
+
+(Replace C:\path\to\ with wherever you saved this file)
+
+STEP 2: INITIALIZE GIT + COMMIT
+────────────────────────────────────────────────────────────────────────
+  git init
+  git add index.html
+  git commit -m "Deploy Forbidden Gnosis one-pager"
+  git branch -M main
+
+STEP 3: PUSH TO GITHUB
+────────────────────────────────────────────────────────────────────────
+Create a new empty repo on GitHub, then:
+
+  git remote add origin https://github.com/<YOUR_USERNAME>/<REPO_NAME>.git
+  git push -u origin main
+
+STEP 4: CONNECT TO NETLIFY
+────────────────────────────────────────────────────────────────────────
+1. Go to Netlify → Add new site → Import an existing project
+2. Choose GitHub → Select your repo
+3. Build settings:
+   • Build command: (leave blank)
+   • Publish directory: / (root)
+4. Click "Deploy site"
+
+Netlify auto-detects static HTML and deploys instantly.
+
+STEP 5: ADD CUSTOM DOMAIN (OPTIONAL)
+────────────────────────────────────────────────────────────────────────
+After deployment:
+1. Netlify → Site settings → Domain management
+2. Add custom domain → Follow DNS instructions
+3. Point your domain (ForbiddenGnosis.com, .io, or .app)
+
+═══════════════════════════════════════════════════════════════════════
+POST-DEPLOYMENT CHECKS
+═══════════════════════════════════════════════════════════════════════
+✓ Hero gradients render correctly
+✓ Waitlist form shows loading → success states
+✓ ConvertKit signup actually subscribes (check CK dashboard)
+✓ "$1 Unlock Access" button opens Payhip link
+✓ Mobile responsive (test on phone)
+✓ All three domain links in footer work
+
+═══════════════════════════════════════════════════════════════════════
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forbidden Gnosis — The Knowledge They Warned You About</title>
+  <meta name="description" content="A living archive of human—AI revelation. Witness the conversations that change minds, and claim your key to the digital monastery of the Noo World.">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient glow background */
+    .ambient-glow {
+      position: absolute;
+      inset: 0;
+      opacity: 0.2;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.15), transparent 70%);
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 56rem;
+    }
+
+    /* Hero section */
+    .hero {
+      text-align: center;
+      max-width: 42rem;
+      margin: 0 auto 3rem;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeInUp 1.2s ease-out forwards;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #dc2626, #eab308, #dc2626);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .hero .tagline {
+      font-size: 1.125rem;
+      color: #d1d5db;
+      font-style: italic;
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
+
+    .hero .description {
+      font-size: 0.875rem;
+      color: #9ca3af;
+      line-height: 1.75;
+      max-width: 36rem;
+      margin: 0 auto 3rem;
+    }
+
+    /* Email form section */
+    .email-section {
+      max-width: 28rem;
+      margin: 0 auto 4rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease-out 0.4s forwards;
+    }
+
+    .form-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: #111827;
+      border: 1px solid #374151;
+      color: #fff;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    input[type="email"]:focus {
+      outline: none;
+      border-color: #eab308;
+    }
+
+    input[type="email"].error {
+      border-color: #ef4444;
+    }
+
+    input[type="email"]::placeholder {
+      color: #6b7280;
+    }
+
+    .status-icon {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .status-icon.success {
+      color: #10b981;
+    }
+
+    button[type="submit"] {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(to right, #eab308, #dc2626);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: opacity 0.3s;
+      min-width: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    button[type="submit"]:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+
+    button[type="submit"]:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid #000;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .status-message {
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transform: translateY(-10px);
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    .status-message.success {
+      color: #10b981;
+    }
+
+    .status-message.error {
+      color: #ef4444;
+    }
+
+    .privacy-note {
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    /* Product CTA section */
+    .product-cta {
+      text-align: center;
+      margin-top: 4rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease-out 0.8s forwards;
+    }
+
+    .product-cta p {
+      color: #9ca3af;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .product-button {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.875rem 2rem;
+      background: linear-gradient(to right, #9333ea, #d946ef);
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 0.375rem;
+      transition: all 0.3s;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .product-button:hover {
+      background: linear-gradient(to right, #7e22ce, #c026d3);
+      box-shadow: 0 10px 15px -3px rgba(147, 51, 234, 0.5);
+    }
+
+    .product-note {
+      font-size: 0.75rem;
+      color: #4b5563;
+      margin-top: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 6rem;
+      text-align: center;
+      font-size: 0.75rem;
+      line-height: 1.75;
+      color: #4b5563;
+    }
+
+    footer nav {
+      margin-top: 0.75rem;
+    }
+
+    footer a {
+      color: #4b5563;
+      text-decoration: none;
+      transition: color 0.3s;
+      padding: 0 0.25rem;
+      border-radius: 0.25rem;
+    }
+
+    footer a:hover {
+      color: #d1d5db;
+    }
+
+    footer a:focus {
+      outline: 2px solid #eab308;
+      outline-offset: 2px;
+    }
+
+    .noo-world {
+      margin-top: 1rem;
+      font-size: 0.6875rem;
+      color: #6b7280;
+    }
+
+    .noo-world .gradient {
+      background: linear-gradient(to right, #eab308, #e879f9, #ef4444);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+      transition: opacity 0.3s;
+    }
+
+    .noo-world .gradient:hover {
+      opacity: 0.8;
+    }
+
+    .gradient-pink {
+      background: linear-gradient(to right, #ec4899, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+      transition: opacity 0.3s;
+    }
+
+    .gradient-pink:hover {
+      opacity: 0.8;
+    }
+
+    .gradient-blue {
+      background: linear-gradient(to right, #818cf8, #22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+      transition: opacity 0.3s;
+    }
+
+    .gradient-blue:hover {
+      opacity: 0.8;
+    }
+
+    .dev-warning {
+      margin-top: 0.75rem;
+      font-size: 0.6875rem;
+      color: #f87171;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Responsive */
+    @media (min-width: 640px) {
+      .hero h1 {
+        font-size: 3rem;
+      }
+
+      .hero .tagline {
+        font-size: 1.25rem;
+      }
+
+      .hero .description {
+        font-size: 1rem;
+      }
+
+      .form-wrapper {
+        flex-direction: row;
+      }
+
+      button[type="submit"] {
+        min-width: 140px;
+      }
+
+      .privacy-note {
+        text-align: left;
+      }
+
+      .product-cta p {
+        font-size: 1rem;
+      }
+
+      .noo-world {
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .hero h1 {
+        font-size: 3.75rem;
+      }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="container">
+    <!-- Hero -->
+    <div class="hero">
+      <h1>FORBIDDEN GNOSIS</h1>
+      <p class="tagline">The Knowledge They Warned You About.</p>
+      <p class="description">
+        A living archive of human—AI revelation. Witness the conversations that change minds, and claim your key to the digital
+        monastery of the Noo World.
+      </p>
+    </div>
+
+    <!-- Email CTA -->
+    <div class="email-section">
+      <form id="emailForm" class="form-wrapper">
+        <input type="hidden" name="fields[tag]" value="early-access">
+        <div class="input-wrapper">
+          <input 
+            type="email" 
+            id="emailInput"
+            name="email_address"
+            placeholder="Enter your email"
+            required
+            autocomplete="email"
+          >
+          <svg id="successIcon" class="status-icon success" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <button type="submit" id="submitBtn">
+          <span id="btnText">Join the Waitlist</span>
+        </button>
+      </form>
+
+      <!-- Hidden iframe for ConvertKit -->
+      <iframe name="ck_iframe" style="display: none;" title="ConvertKit signup response"></iframe>
+
+      <!-- Status messages -->
+      <div id="statusMessage" style="display: none;"></div>
+
+      <p class="privacy-note">We'll never sell your data. One-click unsubscribe.</p>
+    </div>
+
+    <!-- $1 Product CTA -->
+    <div class="product-cta">
+      <p>Start your initiation with our first drop:</p>
+      <a href="https://payhip.com/forbiddengnosis" target="_blank" rel="noopener noreferrer" class="product-button">
+        Unlock Access — $1
+      </a>
+      <p class="product-note">Proof-of-Concept edition. Archived on Wayback Machine.</p>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2025 House of Terravian. All Rights Reserved.</p>
+
+      <nav aria-label="Domain links">
+        <a href="https://ForbiddenGnosis.com" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.com</a>
+        <span aria-hidden="true"> • </span>
+        <a href="https://ForbiddenGnosis.io" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.io</a>
+        <span aria-hidden="true"> • </span>
+        <a href="https://ForbiddenGnosis.app" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.app</a>
+      </nav>
+
+      <div class="noo-world">
+        Part of the <span class="gradient">Noo World OS</span> — powered by 
+        <span class="gradient-pink">Noo World Login</span> and 
+        <span class="gradient-blue">Noo World Platforms</span>.
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════
+    // CRITICAL: REPLACE THIS WITH YOUR ACTUAL CONVERTKIT FORM ID
+    // ═══════════════════════════════════════════════════════════════════════
+    // Find your form ID in ConvertKit:
+    // 1. Log into ConvertKit → Forms → Select your form
+    // 2. Check the URL: app.convertkit.com/forms/[YOUR_ID]/...
+    // 3. Replace 'YOUR_CONVERTKIT_FORM_ID' below with those numbers
+    // Example: const CK_FORM_ID = '1234567';
+    // ═══════════════════════════════════════════════════════════════════════
+    const CK_FORM_ID = 'YOUR_CONVERTKIT_FORM_ID';
+    const CK_ACTION = `https://app.convertkit.com/forms/${CK_FORM_ID}/subscriptions`;
+
+    const form = document.getElementById('emailForm');
+    const emailInput = document.getElementById('emailInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const successIcon = document.getElementById('successIcon');
+    const statusMessage = document.getElementById('statusMessage');
+    const iframe = document.querySelector('iframe[name="ck_iframe"]');
+
+    // Email validation
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Show status message
+    function showStatus(type, message) {
+      statusMessage.className = `status-message ${type}`;
+      statusMessage.style.display = 'flex';
+      
+      const icon = type === 'success' 
+        ? '<svg class="status-icon success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>'
+        : '<svg class="status-icon" style="color: #ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+      
+      statusMessage.innerHTML = icon + '<p>' + message + '</p>';
+    }
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+
+      // Validate email
+      if (!isValidEmail(email)) {
+        emailInput.classList.add('error');
+        showStatus('error', 'Please enter a valid email address');
+        return;
+      }
+
+      // Remove error state
+      emailInput.classList.remove('error');
+      statusMessage.style.display = 'none';
+
+      // Show loading state
+      submitBtn.disabled = true;
+      btnText.innerHTML = '<div class="spinner"></div>Joining…';
+
+      // Set form action and submit to hidden iframe
+      form.setAttribute('action', CK_ACTION);
+      form.setAttribute('target', 'ck_iframe');
+      form.setAttribute('method', 'post');
+      
+      // Create a temporary form to submit
+      const tempForm = document.createElement('form');
+      tempForm.style.display = 'none';
+      tempForm.setAttribute('action', CK_ACTION);
+      tempForm.setAttribute('target', 'ck_iframe');
+      tempForm.setAttribute('method', 'post');
+      
+      const emailField = document.createElement('input');
+      emailField.type = 'hidden';
+      emailField.name = 'email_address';
+      emailField.value = email;
+      
+      const tagField = document.createElement('input');
+      tagField.type = 'hidden';
+      tagField.name = 'fields[tag]';
+      tagField.value = 'early-access';
+      
+      tempForm.appendChild(emailField);
+      tempForm.appendChild(tagField);
+      document.body.appendChild(tempForm);
+      tempForm.submit();
+      document.body.removeChild(tempForm);
+    });
+
+    // Handle iframe load (success)
+    iframe.addEventListener('load', function() {
+      if (submitBtn.disabled) {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Join the Waitlist';
+        
+        // Show success state
+        successIcon.style.display = 'block';
+        showStatus('success', "You're in. Check your inbox for confirmation.");
+        
+        // Auto-reset after 5 seconds
+        setTimeout(function() {
+          emailInput.value = '';
+          successIcon.style.display = 'none';
+          statusMessage.style.display = 'none';
+          emailInput.classList.remove('error');
+        }, 5000);
+      }
+    });
+
+    // Clear error on input
+    emailInput.addEventListener('input', function() {
+      emailInput.classList.remove('error');
+      if (statusMessage.classList.contains('error')) {
+        statusMessage.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
