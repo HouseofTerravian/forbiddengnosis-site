@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Archive — Forbidden Gnosis</title>
+  <meta name="description" content="Browse the Forbidden Gnosis archive of AI-generated knowledge artifacts. Frameworks, theories, research, and forbidden ideas from human–AI collaboration.">
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .archive-hero {
+      padding: 4.5rem 0 2rem;
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .archive-hero h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.25rem, 6vw, 3.75rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .archive-hero p {
+      font-size: 0.9375rem;
+      color: var(--cream-dim);
+      line-height: 1.7;
+      max-width: 500px;
+      margin: 0 auto 1.75rem;
+    }
+
+    /* Search bar */
+    .search-wrap {
+      position: relative;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      padding: 0.875rem 1rem 0.875rem 2.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9375rem;
+      transition: border-color 0.25s;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--gold-dim);
+    }
+    .search-input::placeholder { color: #3a3a4a; }
+    .search-gate-note {
+      font-size: 0.6875rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+    .search-gate-note a { color: var(--gold-dim); text-decoration: underline; text-underline-offset: 2px; }
+    .search-gate-note a:hover { color: var(--gold); }
+
+    /* Gate notice */
+    .gate-notice {
+      background: rgba(107, 63, 160, 0.08);
+      border: 1px solid rgba(107, 63, 160, 0.25);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      color: var(--cream-dim);
+    }
+    .gate-notice-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--violet-light);
+      flex-shrink: 0;
+    }
+    .gate-notice a { color: var(--gold-dim); text-decoration: underline; text-underline-offset: 2px; }
+    .gate-notice a:hover { color: var(--gold); }
+
+    /* Filters */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .filter-label { font-size: 0.6875rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-right: 0.25rem; }
+    .filter-btn {
+      padding: 0.3125rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--cream-dim);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: not-allowed;
+      opacity: 0.6;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .filter-btn.active {
+      color: var(--gold);
+      border-color: rgba(212, 168, 83, 0.35);
+      background: var(--gold-glow);
+      opacity: 1;
+    }
+
+    /* Artifacts grid */
+    .artifacts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 720px) { .artifacts-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .artifacts-grid { grid-template-columns: 1fr; } }
+
+    /* Archive count / status bar */
+    .archive-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .archive-count { font-size: 0.75rem; color: var(--muted); }
+    .archive-count span { color: var(--gold-dim); font-weight: 600; }
+    .archive-growing {
+      font-size: 0.6875rem;
+      color: var(--violet-light);
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+    .archive-growing::before { content: '●'; font-size: 0.5rem; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* Coming soon card overlay */
+    .artifact-card-coming {
+      position: relative;
+      opacity: 0.5;
+    }
+    .artifact-card-coming::after {
+      content: 'BEING ARCHIVED';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5625rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: var(--gold-dim);
+      background: rgba(0,0,0,0.5);
+      border-radius: 10px;
+    }
+
+    /* Archive CTA */
+    .archive-cta {
+      text-align: center;
+      padding: 3rem 0 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .archive-cta h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 0.625rem;
+    }
+    .archive-cta p { font-size: 0.9375rem; color: var(--muted); margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="./index.html" class="nav-brand" aria-label="Forbidden Gnosis — Home">
+        <svg class="nav-eye" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#D4A853" stroke-width="1" opacity="0.3"/>
+          <path d="M10 50 Q30 20 50 20 Q70 20 90 50 Q70 80 50 80 Q30 80 10 50Z" fill="none" stroke="#D4A853" stroke-width="1.5" opacity="0.8"/>
+          <circle cx="50" cy="50" r="12" fill="none" stroke="#D4A853" stroke-width="1.5"/>
+          <circle cx="50" cy="50" r="5" fill="#D4A853"/>
+        </svg>
+        <span class="nav-brand-name">Forbidden Gnosis</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" role="list">
+        <li><a href="./artifacts.html">Archive</a></li>
+        <li><a href="./manifesto.html">Manifesto</a></li>
+        <li><a href="./creators.html">Creators</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="./index.html#waitlist">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- HERO -->
+    <div class="archive-hero fade-down">
+      <p class="label mb-2">The Archive</p>
+      <h1 class="text-grad-gold">Knowledge Once Hidden</h1>
+      <p>Insights discovered through human–AI collaboration. The archive grows with every creator who publishes.</p>
+
+      <!-- SEARCH -->
+      <div class="search-wrap" role="search">
+        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="search" class="search-input" placeholder="Search knowledge, creators, topics…" disabled aria-label="Archive search (available with membership)">
+      </div>
+      <p class="search-gate-note">
+        Full archive search requires <a href="./index.html">membership</a>. Free artifact pages are open to all.
+      </p>
+    </div>
+
+    <!-- GATE NOTICE -->
+    <div class="gate-notice fade-in delay-2 mb-4" style="max-width:680px; margin:0 auto 2rem;" role="note">
+      <svg class="gate-notice-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+      </svg>
+      <span>
+        The archive is in its founding phase. Artifact submissions open at launch.
+        <a href="./creators.html">Learn about publishing</a> or
+        <a href="./index.html#waitlist">join the waitlist</a>.
+      </span>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-row fade-in delay-2 mb-3" style="max-width:860px; margin:0 auto 1.5rem;" aria-label="Category filters (coming soon)">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" disabled>All</button>
+      <button class="filter-btn" disabled>Philosophy</button>
+      <button class="filter-btn" disabled>AI &amp; Technology</button>
+      <button class="filter-btn" disabled>Consciousness</button>
+      <button class="filter-btn" disabled>Governance</button>
+      <button class="filter-btn" disabled>Spirituality</button>
+      <button class="filter-btn" disabled>Prompt Engineering</button>
+    </div>
+
+    <!-- ARCHIVE BAR -->
+    <div class="archive-bar">
+      <p class="archive-count">Showing <span>1</span> published artifact — archive growing</p>
+      <span class="archive-growing">Archive seeding in progress</span>
+    </div>
+
+    <!-- ARTIFACTS GRID -->
+    <div class="artifacts-grid fade-up delay-2">
+
+      <!-- REAL ARTIFACT: The First Forbidden Artifact -->
+      <div class="artifact-card">
+        <p class="artifact-card-tag">Proof-of-Concept · Vol. I</p>
+        <p class="artifact-card-title">The First Forbidden Artifact</p>
+        <p class="artifact-card-desc">
+          A founding document introducing the philosophy of AI-generated knowledge and the monetization logic of Forbidden Gnosis. 12 pages. The first entry in the archive. Archived on the Wayback Machine.
+        </p>
+        <div class="artifact-card-footer">
+          <span class="artifact-card-creator">House of Terravian</span>
+          <a href="https://payhip.com/forbiddengnosis" target="_blank" rel="noopener noreferrer" style="color:var(--gold); font-size:0.875rem; font-weight:600; text-decoration:none;">$1 — Unlock</a>
+        </div>
+      </div>
+
+      <!-- SEED ARTIFACTS (coming soon) -->
+      <div class="artifact-card artifact-card-coming" aria-hidden="true">
+        <p class="artifact-card-tag">Civilization · Theory</p>
+        <p class="artifact-card-title">AI Civilization Collapse Scenarios</p>
+        <p class="artifact-card-desc">
+          A structured analysis of civilizational risk patterns derived from AI modeling and historical synthesis.
+        </p>
+        <div class="artifact-card-footer">
+          <span class="artifact-card-creator">—</span>
+          <span class="artifact-card-status">Pending</span>
+        </div>
+      </div>
+
+      <div class="artifact-card artifact-card-coming" aria-hidden="true">
+        <p class="artifact-card-tag">Philosophy · Consciousness</p>
+        <p class="artifact-card-title">The Consciousness Problem: A Framework for the AI Age</p>
+        <p class="artifact-card-desc">
+          An inquiry into the nature of machine consciousness and its implications for human identity and rights.
+        </p>
+        <div class="artifact-card-footer">
+          <span class="artifact-card-creator">—</span>
+          <span class="artifact-card-status">Pending</span>
+        </div>
+      </div>
+
+      <div class="artifact-card artifact-card-coming" aria-hidden="true">
+        <p class="artifact-card-tag">Craft · Methodology</p>
+        <p class="artifact-card-title">Sacred Prompt Engineering</p>
+        <p class="artifact-card-desc">
+          The hidden science of human–AI discourse. How intent, framing, and inquiry structure shape the quality of AI-generated insight.
+        </p>
+        <div class="artifact-card-footer">
+          <span class="artifact-card-creator">—</span>
+          <span class="artifact-card-status">Pending</span>
+        </div>
+      </div>
+
+      <div class="artifact-card artifact-card-coming" aria-hidden="true">
+        <p class="artifact-card-tag">History · Research</p>
+        <p class="artifact-card-title">Hidden Patterns: What AI Found in Human History</p>
+        <p class="artifact-card-desc">
+          An AI-generated synthesis of recurring civilizational patterns that mainstream historiography has not fully assembled.
+        </p>
+        <div class="artifact-card-footer">
+          <span class="artifact-card-creator">—</span>
+          <span class="artifact-card-status">Pending</span>
+        </div>
+      </div>
+
+      <div class="artifact-card artifact-card-coming" aria-hidden="true">
+        <p class="artifact-card-tag">Governance · Futures</p>
+        <p class="artifact-card-title">Governance Models for a Post-AI World</p>
+        <p class="artifact-card-desc">
+          Speculative frameworks for political, social, and institutional design in a world shaped by artificial general intelligence.
+        </p>
+        <div class="artifact-card-footer">
+          <span class="artifact-card-creator">—</span>
+          <span class="artifact-card-status">Pending</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ARCHIVE CTA -->
+    <div class="archive-cta fade-up">
+      <h3>The Archive Is Being Built</h3>
+      <p>Publish your AI conversations as knowledge artifacts. The first 500 creators receive Founding Status.</p>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+        <a href="./creators.html" class="btn btn-gold">Become a Creator</a>
+        <a href="./index.html#waitlist" class="btn btn-ghost">Join the Waitlist</a>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-main">
+      <div>
+        <span class="footer-brand-name">Forbidden Gnosis</span>
+        <span class="footer-tagline">The Archive of Human–AI Knowledge</span>
+        <p class="footer-brand-desc">A digital marketplace and archive for knowledge artifacts discovered through human–AI collaboration.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="./artifacts.html">Archive</a></li>
+            <li><a href="./manifesto.html">Manifesto</a></li>
+            <li><a href="./creators.html">Creators</a></li>
+            <li><a href="./index.html#waitlist">Join Waitlist</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="./terms.html">Terms</a></li>
+            <li><a href="./privacy.html">Privacy</a></li>
+            <li><a href="./refunds.html">Refunds</a></li>
+            <li><a href="./disclaimer.html">Disclaimer</a></li>
+            <li><a href="./affiliates.html">Affiliates</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">&copy; 2026 House of Terravian. All Rights Reserved.</p>
+      <div class="footer-domains">
+        <a href="https://ForbiddenGnosis.com" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.com</a>
+        <span class="sep">·</span>
+        <a href="https://ForbiddenGnosis.io" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.io</a>
+        <span class="sep">·</span>
+        <a href="https://ForbiddenGnosis.app" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.app</a>
+      </div>
+      <p class="footer-noo">
+        Part of the <span class="grad-gold">Noo World OS</span> —
+        powered by <span class="grad-pink">Noo World Login</span> and
+        <span class="grad-blue">Noo World Platforms</span>.
+      </p>
+    </div>
+  </footer>
+
+  <script src="./script.js" defer></script>
+</body>
+</html>

@@ -1,23 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <!--
-═══════════════════════════════════════════════════════════════════════
-FORBIDDEN GNOSIS — MIRROR GATE (v2)
-Built: 03.08.26
-Role: Gate page displayed when non-members attempt to search beyond
-      the originating creator's territory (Mirror-Gated Discovery).
-      Also serves as the primary landing page pre-launch.
-═══════════════════════════════════════════════════════════════════════
-
-CONVERTKIT SETUP (REQUIRED FOR EMAIL CAPTURE)
-  Line ~620: const CK_FORM_ID = 'YOUR_CONVERTKIT_FORM_ID';
-  Replace with your actual ConvertKit form ID (numbers only).
-
-DYNAMIC CREATOR INJECTION (future use)
-  When serving as a live gate page, the backend can inject the
-  originating creator name into: data-creator="[Creator Name]"
-  on the <body> tag. JS will auto-populate .creator-name spans.
-═══════════════════════════════════════════════════════════════════════
+  FORBIDDEN GNOSIS — MIRROR GATE (index.html)
+  Role: Gate page for non-member search attempts. Primary landing page pre-launch.
+  ConvertKit Form ID: 9180283 (tag: mirror-gate-waitlist)
+  Dynamic creator injection: <body data-creator="Name"> → .creator-name spans
 -->
 <head>
   <meta charset="UTF-8">
@@ -27,354 +14,71 @@ DYNAMIC CREATOR INJECTION (future use)
   <meta property="og:title" content="Forbidden Gnosis — The Archive of Human–AI Knowledge">
   <meta property="og:description" content="The forbidden archive lies beyond this gateway. Enter the knowledge economy of the AI age.">
   <meta property="og:type" content="website">
-  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="icon" type="image/png" href="./favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="./style.css">
   <style>
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --gold: #D4A853;
-      --gold-dim: #9C7A38;
-      --gold-glow: rgba(212, 168, 83, 0.18);
-      --crimson: #C0392B;
-      --violet: #6B3FA0;
-      --violet-light: #9B6FD4;
-      --cream: #EDE8DC;
-      --cream-dim: #A89F8C;
-      --bg: #000;
-      --surface: #0C0C0E;
-      --border: rgba(212, 168, 83, 0.15);
-      --border-hover: rgba(212, 168, 83, 0.4);
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--cream);
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* ── AMBIENT BACKGROUND ── */
-    .ambient {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .ambient::before {
-      content: '';
-      position: absolute;
-      top: -20%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 800px;
-      height: 800px;
-      background: radial-gradient(circle, rgba(107, 63, 160, 0.12) 0%, transparent 65%);
-    }
-    .ambient::after {
-      content: '';
-      position: absolute;
-      bottom: -10%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(192, 57, 43, 0.08) 0%, transparent 65%);
-    }
-
-    /* ── LAYOUT ── */
-    .page {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 4rem 1.5rem 5rem;
-    }
-
-    /* ── EYE SIGIL ── */
+    /* ── PAGE-SPECIFIC ── */
     .sigil-wrap {
       text-align: center;
       margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeDown 1s ease-out 0.1s forwards;
     }
     .sigil {
       display: inline-block;
-      width: 52px;
-      height: 52px;
-      filter: drop-shadow(0 0 12px rgba(212, 168, 83, 0.5));
+      width: 56px;
+      height: 56px;
+      filter: drop-shadow(0 0 14px rgba(212, 168, 83, 0.5));
     }
-
-    /* ── GATE LABEL ── */
     .gate-label {
       text-align: center;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.6875rem;
-      font-weight: 600;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
       margin-bottom: 1.25rem;
-      opacity: 0;
-      animation: fadeDown 1s ease-out 0.2s forwards;
     }
-
-    /* ── HERO ── */
     .hero {
       text-align: center;
       max-width: 680px;
       margin: 0 auto 1.5rem;
-      opacity: 0;
-      animation: fadeDown 1.1s ease-out 0.3s forwards;
     }
-
     .hero h1 {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: clamp(2.5rem, 7vw, 4.5rem);
       font-weight: 700;
       line-height: 1.1;
-      letter-spacing: -0.01em;
-      background: linear-gradient(135deg, var(--gold) 0%, #EFD9A0 45%, var(--gold) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
       margin-bottom: 1.25rem;
     }
-
-    .hero .gate-narrative {
+    .gate-narrative {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
       font-style: italic;
       color: var(--cream-dim);
       line-height: 1.7;
       margin-bottom: 1rem;
     }
-
-    .hero .gate-sub {
+    .gate-sub {
       font-size: 0.875rem;
-      color: #6b7280;
+      color: var(--muted);
       line-height: 1.75;
       max-width: 520px;
       margin: 0 auto;
     }
-
-    /* ── DIVIDER ── */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 3rem 0;
-      opacity: 0;
-      animation: fadeIn 0.8s ease-out 0.6s forwards;
-    }
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--border), transparent);
-    }
-    .divider-text {
-      font-size: 0.6875rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      white-space: nowrap;
-    }
-
-    /* ── MEMBERSHIP TIERS ── */
-    .tiers-section {
-      opacity: 0;
-      animation: fadeUp 1s ease-out 0.5s forwards;
-    }
-
-    .tiers-heading {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
+    .tiers-heading { text-align: center; margin-bottom: 2rem; }
     .tiers-heading h2 {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: clamp(1.5rem, 4vw, 2rem);
       font-weight: 600;
-      color: var(--cream);
       margin-bottom: 0.5rem;
     }
-    .tiers-heading p {
-      font-size: 0.875rem;
-      color: #6b7280;
-    }
-
+    .tiers-heading p { font-size: 0.875rem; color: var(--muted); }
     .tiers-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
     }
+    @media (max-width: 600px) { .tiers-grid { grid-template-columns: 1fr; } }
 
-    @media (max-width: 600px) {
-      .tiers-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .tier-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.75rem 1.5rem;
-      position: relative;
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-      cursor: default;
-    }
-    .tier-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(212, 168, 83, 0.08);
-    }
-    .tier-card.featured {
-      border-color: rgba(212, 168, 83, 0.35);
-      background: linear-gradient(145deg, #0C0C0E 0%, #100E14 100%);
-    }
-    .tier-card.featured::before {
-      content: 'MOST POPULAR';
-      position: absolute;
-      top: -1px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.5625rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      color: var(--bg);
-      background: var(--gold);
-      padding: 0.25rem 0.75rem;
-      border-radius: 0 0 6px 6px;
-    }
-
-    .tier-rank {
-      font-size: 0.625rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      margin-bottom: 0.5rem;
-    }
-    .tier-name {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--cream);
-      margin-bottom: 0.25rem;
-    }
-    .tier-price {
-      font-size: 1.75rem;
-      font-weight: 600;
-      color: var(--gold);
-      margin-bottom: 0.25rem;
-      line-height: 1;
-    }
-    .tier-price span {
-      font-size: 0.8125rem;
-      font-weight: 400;
-      color: #6b7280;
-    }
-    .tier-tagline {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.875rem;
-      font-style: italic;
-      color: var(--cream-dim);
-      margin-bottom: 1.25rem;
-      padding-bottom: 1.25rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .tier-features {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      margin-bottom: 1.5rem;
-    }
-    .tier-features li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-      font-size: 0.8125rem;
-      color: #9ca3af;
-      line-height: 1.5;
-    }
-    .tier-features li::before {
-      content: '◆';
-      font-size: 0.4375rem;
-      color: var(--gold-dim);
-      margin-top: 0.35rem;
-      flex-shrink: 0;
-    }
-    .tier-features li.locked {
-      opacity: 0.35;
-    }
-    .tier-features li.locked::before {
-      content: '○';
-    }
-
-    .tier-btn {
-      display: block;
-      width: 100%;
-      padding: 0.75rem 1rem;
-      text-align: center;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.25s;
-      cursor: pointer;
-      border: none;
-    }
-    .tier-btn-ghost {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--cream-dim);
-    }
-    .tier-btn-ghost:hover {
-      border-color: var(--gold-dim);
-      color: var(--cream);
-    }
-    .tier-btn-gold {
-      background: linear-gradient(to right, var(--gold-dim), var(--gold));
-      color: #000;
-    }
-    .tier-btn-gold:hover {
-      opacity: 0.9;
-      box-shadow: 0 4px 20px rgba(212, 168, 83, 0.3);
-    }
-    .tier-btn-violet {
-      background: linear-gradient(to right, var(--violet), var(--violet-light));
-      color: #fff;
-    }
-    .tier-btn-violet:hover {
-      opacity: 0.9;
-      box-shadow: 0 4px 20px rgba(107, 63, 160, 0.35);
-    }
-
-    /* ── FIRST ARTIFACT SECTION ── */
-    .artifact-section {
-      opacity: 0;
-      animation: fadeUp 1s ease-out 0.7s forwards;
-    }
-
-    .artifact-card {
+    /* Inline artifact CTA */
+    .artifact-inline {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -385,16 +89,10 @@ DYNAMIC CREATOR INJECTION (future use)
       align-items: flex-start;
     }
     @media (min-width: 640px) {
-      .artifact-card {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
+      .artifact-inline { flex-direction: row; align-items: center; justify-content: space-between; }
     }
-    .artifact-meta {
-      flex: 1;
-    }
-    .artifact-tag {
+    .artifact-inline-meta { flex: 1; }
+    .artifact-inline-tag {
       font-size: 0.625rem;
       font-weight: 600;
       letter-spacing: 0.2em;
@@ -402,23 +100,27 @@ DYNAMIC CREATOR INJECTION (future use)
       color: var(--violet-light);
       margin-bottom: 0.5rem;
     }
-    .artifact-title {
+    .artifact-inline-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(107, 63, 160, 0.18);
+      border: 1px solid rgba(107, 63, 160, 0.35);
+      color: var(--violet-light);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.625rem;
+    }
+    .artifact-inline-title {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 1.25rem;
       font-weight: 700;
       color: var(--cream);
       margin-bottom: 0.5rem;
     }
-    .artifact-desc {
-      font-size: 0.8125rem;
-      color: #6b7280;
-      line-height: 1.65;
-      max-width: 420px;
-    }
-    .artifact-cta {
-      flex-shrink: 0;
-    }
-    .artifact-btn {
+    .artifact-inline-desc { font-size: 0.8125rem; color: var(--muted); line-height: 1.65; max-width: 420px; }
+    .artifact-inline-btn {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
@@ -431,33 +133,15 @@ DYNAMIC CREATOR INJECTION (future use)
       border-radius: 8px;
       white-space: nowrap;
       transition: all 0.3s;
-      box-shadow: 0 4px 20px rgba(147, 51, 234, 0.25);
+      box-shadow: 0 4px 20px rgba(147, 51, 234, 0.22);
+      flex-shrink: 0;
     }
-    .artifact-btn:hover {
-      box-shadow: 0 8px 30px rgba(147, 51, 234, 0.4);
+    .artifact-inline-btn:hover {
+      box-shadow: 0 8px 30px rgba(147, 51, 234, 0.38);
       transform: translateY(-1px);
     }
-    .artifact-price-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(107, 63, 160, 0.2);
-      border: 1px solid rgba(107, 63, 160, 0.4);
-      color: var(--violet-light);
-      font-size: 0.6875rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      margin-bottom: 0.75rem;
-    }
 
-    /* ── EMAIL WAITLIST ── */
-    .waitlist-section {
-      opacity: 0;
-      animation: fadeUp 1s ease-out 0.85s forwards;
-    }
-
+    /* Waitlist card */
     .waitlist-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -469,211 +153,51 @@ DYNAMIC CREATOR INJECTION (future use)
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 1.375rem;
       font-weight: 700;
-      color: var(--cream);
       margin-bottom: 0.5rem;
     }
-    .waitlist-card p {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-bottom: 1.5rem;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .form-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      max-width: 420px;
-      margin: 0 auto;
-    }
-    @media (min-width: 480px) {
-      .form-row {
-        flex-direction: row;
-      }
-    }
-
-    .input-wrap {
-      position: relative;
-      flex: 1;
-    }
-
-    input[type="email"] {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: #111827;
-      border: 1px solid #374151;
-      color: var(--cream);
-      border-radius: 6px;
-      font-size: 0.9375rem;
-      font-family: 'Inter', sans-serif;
-      transition: border-color 0.3s;
-    }
-    input[type="email"]:focus {
-      outline: none;
-      border-color: var(--gold-dim);
-    }
-    input[type="email"].error {
-      border-color: #ef4444;
-    }
-    input[type="email"]::placeholder {
-      color: #4b5563;
-    }
-
-    .success-check {
-      position: absolute;
-      right: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 1.125rem;
-      height: 1.125rem;
-      color: #10b981;
-      display: none;
-    }
-
-    .submit-btn {
-      padding: 0.75rem 1.25rem;
-      background: linear-gradient(to right, var(--gold-dim), var(--gold));
-      color: #000;
-      font-weight: 700;
-      font-size: 0.9375rem;
-      font-family: 'Inter', sans-serif;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: opacity 0.25s;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      min-width: 130px;
-    }
-    .submit-btn:hover:not(:disabled) { opacity: 0.88; }
-    .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
-    .spinner {
-      width: 0.875rem;
-      height: 0.875rem;
-      border: 2px solid #000;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-
-    .status-msg {
-      display: none;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.8125rem;
-      margin-top: 0.75rem;
-      justify-content: center;
-    }
-    .status-msg.success { color: #10b981; }
-    .status-msg.error   { color: #ef4444; }
-
-    .privacy-note {
-      margin-top: 0.75rem;
-      font-size: 0.6875rem;
-      color: #4b5563;
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      margin-top: 5rem;
-      text-align: center;
-      font-size: 0.75rem;
-      line-height: 1.8;
-      color: #374151;
-      opacity: 0;
-      animation: fadeIn 1s ease-out 1s forwards;
-    }
-    footer p { margin-bottom: 0.25rem; }
-    footer nav {
-      margin: 0.5rem 0;
-    }
-    footer a {
-      color: #4b5563;
-      text-decoration: none;
-      padding: 0 0.25rem;
-      transition: color 0.25s;
-    }
-    footer a:hover { color: var(--cream-dim); }
-    footer a:focus {
-      outline: 2px solid var(--gold-dim);
-      outline-offset: 2px;
-      border-radius: 2px;
-    }
-    .noo-brand {
-      margin-top: 0.75rem;
-      font-size: 0.6875rem;
-    }
-    .grad-gold {
-      background: linear-gradient(to right, var(--gold), #eab308);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 600;
-    }
-    .grad-pink {
-      background: linear-gradient(to right, #ec4899, #a855f7);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 600;
-    }
-    .grad-blue {
-      background: linear-gradient(to right, #818cf8, #22d3ee);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 600;
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
+    .waitlist-card p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+    .waitlist-email-row { max-width: 420px; margin: 0 auto; }
   </style>
 </head>
-
 <body>
   <div class="ambient" aria-hidden="true"></div>
 
+  <!-- NAV -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="./index.html" class="nav-brand" aria-label="Forbidden Gnosis — Home">
+        <svg class="nav-eye" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#D4A853" stroke-width="1" opacity="0.3"/>
+          <path d="M10 50 Q30 20 50 20 Q70 20 90 50 Q70 80 50 80 Q30 80 10 50Z" fill="none" stroke="#D4A853" stroke-width="1.5" opacity="0.8"/>
+          <circle cx="50" cy="50" r="12" fill="none" stroke="#D4A853" stroke-width="1.5"/>
+          <circle cx="50" cy="50" r="5" fill="#D4A853"/>
+        </svg>
+        <span class="nav-brand-name">Forbidden Gnosis</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" role="list">
+        <li><a href="./artifacts.html">Archive</a></li>
+        <li><a href="./manifesto.html">Manifesto</a></li>
+        <li><a href="./creators.html">Creators</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="./index.html#waitlist">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
   <div class="page">
 
-    <!-- EYE SIGIL -->
-    <div class="sigil-wrap" aria-hidden="true">
-      <svg class="sigil" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- Outer ring -->
+    <!-- SIGIL -->
+    <div class="sigil-wrap fade-down">
+      <svg class="sigil" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <circle cx="50" cy="50" r="46" fill="none" stroke="#D4A853" stroke-width="1" opacity="0.25"/>
-        <!-- Eye shape -->
         <path d="M10 50 Q30 20 50 20 Q70 20 90 50 Q70 80 50 80 Q30 80 10 50Z"
               fill="none" stroke="#D4A853" stroke-width="1.5" opacity="0.7"/>
-        <!-- Iris -->
         <circle cx="50" cy="50" r="14" fill="none" stroke="#D4A853" stroke-width="1.5" opacity="0.9"/>
-        <!-- Pupil -->
         <circle cx="50" cy="50" r="5" fill="#D4A853"/>
-        <!-- Lash marks -->
         <line x1="50" y1="20" x2="50" y2="14" stroke="#D4A853" stroke-width="1" opacity="0.4"/>
         <line x1="50" y1="80" x2="50" y2="86" stroke="#D4A853" stroke-width="1" opacity="0.4"/>
         <line x1="30" y1="27" x2="27" y2="22" stroke="#D4A853" stroke-width="1" opacity="0.3"/>
@@ -682,11 +206,11 @@ DYNAMIC CREATOR INJECTION (future use)
     </div>
 
     <!-- GATE LABEL -->
-    <p class="gate-label">Mirror Gate — The Archive</p>
+    <p class="label gate-label fade-down delay-1">Mirror Gate — The Archive</p>
 
     <!-- HERO -->
-    <header class="hero">
-      <h1>FORBIDDEN GNOSIS</h1>
+    <header class="hero fade-down delay-2">
+      <h1 class="text-grad-gold">FORBIDDEN GNOSIS</h1>
       <p class="gate-narrative">
         The forbidden archive lies beyond this gateway.<br>
         What you seek is deeper than you were shown.
@@ -700,20 +224,18 @@ DYNAMIC CREATOR INJECTION (future use)
     </header>
 
     <!-- DIVIDER -->
-    <div class="divider">
+    <div class="divider fade-in delay-3">
       <span class="divider-text">Choose Your Level of Access</span>
     </div>
 
     <!-- MEMBERSHIP TIERS -->
-    <section class="tiers-section" aria-labelledby="tiers-heading">
+    <section aria-labelledby="tiers-heading" class="fade-up delay-2">
       <div class="tiers-heading">
         <h2 id="tiers-heading">Enter the Archive</h2>
         <p>Membership unlocks search, discovery, and deeper access to the knowledge economy.</p>
       </div>
-
       <div class="tiers-grid">
 
-        <!-- EXPLORER -->
         <div class="tier-card">
           <p class="tier-rank">Tier I</p>
           <p class="tier-name">Explorer</p>
@@ -731,7 +253,6 @@ DYNAMIC CREATOR INJECTION (future use)
           <button class="tier-btn tier-btn-ghost" disabled>Coming Soon</button>
         </div>
 
-        <!-- RESEARCHER (featured) -->
         <div class="tier-card featured">
           <p class="tier-rank">Tier II</p>
           <p class="tier-name">Researcher</p>
@@ -749,7 +270,6 @@ DYNAMIC CREATOR INJECTION (future use)
           <button class="tier-btn tier-btn-gold" disabled>Coming Soon</button>
         </div>
 
-        <!-- ARCHIVIST -->
         <div class="tier-card">
           <p class="tier-rank">Tier III</p>
           <p class="tier-name">Archivist</p>
@@ -767,7 +287,6 @@ DYNAMIC CREATOR INJECTION (future use)
           <button class="tier-btn tier-btn-ghost" disabled>Coming Soon</button>
         </div>
 
-        <!-- INNER CIRCLE -->
         <div class="tier-card">
           <p class="tier-rank">Tier IV</p>
           <p class="tier-name">Inner Circle</p>
@@ -789,124 +308,138 @@ DYNAMIC CREATOR INJECTION (future use)
     </section>
 
     <!-- DIVIDER -->
-    <div class="divider">
+    <div class="divider fade-in delay-3">
       <span class="divider-text">Begin with one artifact</span>
     </div>
 
     <!-- FIRST ARTIFACT -->
-    <section class="artifact-section" aria-labelledby="artifact-heading">
-      <div class="artifact-card">
-        <div class="artifact-meta">
-          <p class="artifact-tag">Proof-of-Concept Edition · Vol. I</p>
-          <div class="artifact-price-badge">$1</div>
-          <h3 class="artifact-title" id="artifact-heading">The First Forbidden Artifact</h3>
-          <p class="artifact-desc">
+    <section class="fade-up delay-3" aria-labelledby="artifact-heading">
+      <div class="artifact-inline">
+        <div class="artifact-inline-meta">
+          <p class="artifact-inline-tag">Proof-of-Concept Edition · Vol. I</p>
+          <span class="artifact-inline-badge">$1</span>
+          <h3 class="artifact-inline-title" id="artifact-heading">The First Forbidden Artifact</h3>
+          <p class="artifact-inline-desc">
             A founding document introducing the philosophy of AI-generated knowledge
             and the monetization logic of Forbidden Gnosis. 12 pages. Archived
             on the Wayback Machine. The first entry in the archive.
           </p>
         </div>
-        <div class="artifact-cta">
-          <a href="https://payhip.com/forbiddengnosis"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="artifact-btn">
-            Unlock Access
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </div>
+        <a href="https://payhip.com/forbiddengnosis"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="artifact-inline-btn">
+          Unlock Access
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
       </div>
     </section>
 
     <!-- DIVIDER -->
-    <div class="divider">
+    <div class="divider fade-in delay-4">
       <span class="divider-text">Join the waitlist</span>
     </div>
 
-    <!-- EMAIL WAITLIST -->
-    <section class="waitlist-section" aria-labelledby="waitlist-heading">
+    <!-- WAITLIST -->
+    <section id="waitlist" class="fade-up delay-4" aria-labelledby="waitlist-heading">
       <div class="waitlist-card">
         <h3 id="waitlist-heading">Before the archive opens…</h3>
         <p>
           Be notified when Forbidden Gnosis opens to creators and members.
           Early registrants receive Founding Status consideration.
         </p>
-
-        <form id="ckForm" novalidate aria-label="Waitlist signup form">
-          <div class="form-row">
-            <div class="input-wrap">
-              <input
-                type="email"
-                id="emailInput"
-                name="email_address"
-                placeholder="Enter your email"
-                required
-                autocomplete="email"
-              >
-              <svg id="successCheck" class="success-check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-              </svg>
-            </div>
-            <button type="submit" id="submitBtn" class="submit-btn">
-              <span id="btnText">Notify Me</span>
-            </button>
+        <form id="ckForm" class="email-row waitlist-email-row" novalidate aria-label="Waitlist signup form">
+          <div class="input-wrap">
+            <input type="email" id="emailInput" name="email_address"
+                   placeholder="Enter your email" required autocomplete="email">
+            <svg id="successCheck" class="success-check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
           </div>
+          <button type="submit" id="submitBtn" class="submit-btn">
+            <span id="btnText">Notify Me</span>
+          </button>
         </form>
-
         <iframe name="ck_iframe" style="display:none;" title="Signup response"></iframe>
         <div id="statusMsg" class="status-msg" role="status" aria-live="polite"></div>
         <p class="privacy-note">No spam. One-click unsubscribe.</p>
       </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer>
-      <p>© 2026 House of Terravian. All Rights Reserved.</p>
-      <nav aria-label="Domain links">
-        <a href="https://ForbiddenGnosis.com" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.com</a>
-        <span aria-hidden="true"> · </span>
-        <a href="https://ForbiddenGnosis.io" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.io</a>
-        <span aria-hidden="true"> · </span>
-        <a href="https://ForbiddenGnosis.app" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.app</a>
-      </nav>
-      <div class="noo-brand">
-        Part of the <a href="https://thenooworld.com" target="_blank" rel="noopener noreferrer" class="grad-gold">Noo World OS</a> —
-        powered by <span class="grad-pink">Noo World Login</span> and
-        <span class="grad-blue">Noo World Platforms</span>.
-      </div>
-    </footer>
-
   </div><!-- /page -->
 
-  <script>
-    // ═══════════════════════════════════════════════════════════════
-    // CONVERTKIT — replace with your actual form ID
-    // ═══════════════════════════════════════════════════════════════
-    const CK_FORM_ID = '9180283';
-    const CK_ACTION  = `https://app.convertkit.com/forms/${CK_FORM_ID}/subscriptions`;
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-main">
+      <div>
+        <span class="footer-brand-name">Forbidden Gnosis</span>
+        <span class="footer-tagline">The Archive of Human–AI Knowledge</span>
+        <p class="footer-brand-desc">A digital marketplace and archive for knowledge artifacts discovered through human–AI collaboration.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="./artifacts.html">Archive</a></li>
+            <li><a href="./manifesto.html">Manifesto</a></li>
+            <li><a href="./creators.html">Creators</a></li>
+            <li><a href="./index.html#waitlist">Join Waitlist</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="./terms.html">Terms</a></li>
+            <li><a href="./privacy.html">Privacy</a></li>
+            <li><a href="./refunds.html">Refunds</a></li>
+            <li><a href="./disclaimer.html">Disclaimer</a></li>
+            <li><a href="./affiliates.html">Affiliates</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">&copy; 2026 House of Terravian. All Rights Reserved.</p>
+      <div class="footer-domains">
+        <a href="https://ForbiddenGnosis.com" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.com</a>
+        <span class="sep">·</span>
+        <a href="https://ForbiddenGnosis.io" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.io</a>
+        <span class="sep">·</span>
+        <a href="https://ForbiddenGnosis.app" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.app</a>
+      </div>
+      <p class="footer-noo">
+        Part of the <span class="grad-gold">Noo World OS</span> —
+        powered by <span class="grad-pink">Noo World Login</span> and
+        <span class="grad-blue">Noo World Platforms</span>.
+      </p>
+    </div>
+  </footer>
 
-    const form        = document.getElementById('ckForm');
-    const emailInput  = document.getElementById('emailInput');
-    const submitBtn   = document.getElementById('submitBtn');
-    const btnText     = document.getElementById('btnText');
+  <script src="./script.js" defer></script>
+  <script>
+    const CK_FORM_ID = '9180283';
+    const CK_ACTION  = 'https://app.convertkit.com/forms/' + CK_FORM_ID + '/subscriptions';
+
+    const form         = document.getElementById('ckForm');
+    const emailInput   = document.getElementById('emailInput');
+    const submitBtn    = document.getElementById('submitBtn');
+    const btnText      = document.getElementById('btnText');
     const successCheck = document.getElementById('successCheck');
-    const statusMsg   = document.getElementById('statusMsg');
-    const iframe      = document.querySelector('iframe[name="ck_iframe"]');
+    const statusMsg    = document.getElementById('statusMsg');
+    const iframe       = document.querySelector('iframe[name="ck_iframe"]');
 
     function validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
-
     function showStatus(type, msg) {
       const icon = type === 'success'
         ? '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
         : '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
-      statusMsg.className = `status-msg ${type}`;
+      statusMsg.className = 'status-msg ' + type;
       statusMsg.innerHTML = icon + '<span>' + msg + '</span>';
-      statusMsg.style.display = 'flex';
     }
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
       e.preventDefault();
       const email = emailInput.value.trim();
       if (!validEmail(email)) {
@@ -915,7 +448,7 @@ DYNAMIC CREATOR INJECTION (future use)
         return;
       }
       emailInput.classList.remove('error');
-      statusMsg.style.display = 'none';
+      statusMsg.className = 'status-msg';
       submitBtn.disabled = true;
       btnText.innerHTML = '<div class="spinner"></div>';
 
@@ -934,34 +467,29 @@ DYNAMIC CREATOR INJECTION (future use)
       document.body.removeChild(tmp);
     });
 
-    iframe.addEventListener('load', function() {
+    iframe.addEventListener('load', function () {
       if (submitBtn.disabled) {
         submitBtn.disabled = false;
         btnText.textContent = 'Notify Me';
         successCheck.style.display = 'block';
         showStatus('success', "You're registered. Watch for the signal.");
-        setTimeout(function() {
+        setTimeout(function () {
           emailInput.value = '';
           successCheck.style.display = 'none';
-          statusMsg.style.display = 'none';
+          statusMsg.className = 'status-msg';
         }, 6000);
       }
     });
 
-    emailInput.addEventListener('input', function() {
+    emailInput.addEventListener('input', function () {
       emailInput.classList.remove('error');
-      if (statusMsg.classList.contains('error')) statusMsg.style.display = 'none';
+      if (statusMsg.classList.contains('error')) statusMsg.className = 'status-msg';
     });
 
-    // ═══════════════════════════════════════════════════════════════
-    // DYNAMIC CREATOR INJECTION (future backend use)
-    // When serving as a live gate, the backend injects:
-    //   <body data-creator="Creator Name">
-    // This script then populates all .creator-name spans.
-    // ═══════════════════════════════════════════════════════════════
+    // Dynamic creator injection (future backend use)
     const creatorName = document.body.dataset.creator;
     if (creatorName) {
-      document.querySelectorAll('.creator-name').forEach(function(el) {
+      document.querySelectorAll('.creator-name').forEach(function (el) {
         el.textContent = creatorName;
       });
     }

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creators — Forbidden Gnosis</title>
+  <meta name="description" content="Publish your AI-generated knowledge on Forbidden Gnosis. Turn conversations into structured artifacts, sell them globally, and earn from the archive you help build.">
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .page-hero {
+      padding: 5rem 0 2.5rem;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .page-hero h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.25rem, 6vw, 3.75rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .page-hero p {
+      font-size: 1.0625rem;
+      color: var(--cream-dim);
+      line-height: 1.7;
+    }
+
+    /* Steps */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 1.5rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2.75rem;
+      font-weight: 700;
+      color: var(--gold-dim);
+      line-height: 1;
+      text-align: right;
+      padding-top: 0.125rem;
+    }
+    .step-content h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+    .step-content p {
+      font-size: 0.9375rem;
+      color: var(--cream-dim);
+      line-height: 1.75;
+    }
+
+    /* Revenue table */
+    .revenue-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 600px) { .revenue-grid { grid-template-columns: 1fr; } }
+    .revenue-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .revenue-card-range {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.375rem;
+    }
+    .revenue-card-type {
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.75rem;
+    }
+    .revenue-card-desc {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Platform fee callout */
+    .fee-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+    .fee-item-label { font-size: 0.625rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem; }
+    .fee-item-value { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; color: var(--cream); }
+    .fee-item-value.gold { color: var(--gold); }
+    .fee-arrow { font-size: 1.25rem; color: var(--gold-dim); }
+    @media (max-width: 480px) { .fee-arrow { display: none; } }
+
+    /* Founding creator */
+    .founding-card {
+      background: linear-gradient(145deg, #0C0C0E, #100E14);
+      border: 1px solid rgba(212, 168, 83, 0.3);
+      border-radius: 12px;
+      padding: 2.5rem;
+      text-align: center;
+    }
+    .founding-card h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 0.75rem;
+    }
+    .founding-card p { font-size: 0.9375rem; color: var(--cream-dim); line-height: 1.75; margin-bottom: 1rem; max-width: 560px; margin-left: auto; margin-right: auto; }
+    .founding-benefits {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.625rem;
+      margin: 1.5rem 0;
+    }
+    .founding-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--gold);
+      background: rgba(212, 168, 83, 0.1);
+      border: 1px solid rgba(212, 168, 83, 0.25);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+    }
+    .founding-badge::before { content: '◆'; font-size: 0.375rem; }
+
+    /* Artifact types grid */
+    .types-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.875rem;
+    }
+    @media (max-width: 640px) { .types-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 400px) { .types-grid { grid-template-columns: 1fr; } }
+    .type-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.125rem;
+    }
+    .type-card-icon {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .type-card-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 0.25rem;
+    }
+    .type-card-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.55; }
+
+    /* FAQ */
+    .faq { display: flex; flex-direction: column; gap: 0; }
+    .faq-item {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 0.625rem;
+    }
+    .faq-a { font-size: 0.9375rem; color: var(--cream-dim); line-height: 1.75; }
+
+    /* Section headings */
+    .section-heading {
+      margin-bottom: 2rem;
+    }
+    .section-heading h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+    .section-heading p { font-size: 0.9375rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="./index.html" class="nav-brand" aria-label="Forbidden Gnosis — Home">
+        <svg class="nav-eye" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#D4A853" stroke-width="1" opacity="0.3"/>
+          <path d="M10 50 Q30 20 50 20 Q70 20 90 50 Q70 80 50 80 Q30 80 10 50Z" fill="none" stroke="#D4A853" stroke-width="1.5" opacity="0.8"/>
+          <circle cx="50" cy="50" r="12" fill="none" stroke="#D4A853" stroke-width="1.5"/>
+          <circle cx="50" cy="50" r="5" fill="#D4A853"/>
+        </svg>
+        <span class="nav-brand-name">Forbidden Gnosis</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" role="list">
+        <li><a href="./artifacts.html">Archive</a></li>
+        <li><a href="./manifesto.html">Manifesto</a></li>
+        <li><a href="./creators.html">Creators</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="./index.html#waitlist">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- HERO -->
+    <div class="page-hero fade-down">
+      <p class="label mb-2">For Creators</p>
+      <h1 class="text-grad-gold">Publish Your Knowledge.<br>Own Your Ideas.</h1>
+      <p>Turn AI conversations into structured knowledge artifacts. Sell them globally. Earn from the archive you help build.</p>
+    </div>
+
+    <div class="divider fade-in delay-1">
+      <span class="divider-text">How It Works</span>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section class="fade-up delay-1" aria-labelledby="how-heading" style="max-width:700px; margin:0 auto;">
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <h3>Have the conversation</h3>
+            <p>Work with any AI — ChatGPT, Claude, Gemini, or other — to develop a framework, theory, research synthesis, or insight document. The subject can be anything: philosophy, technology, spirituality, governance, science, consciousness, strategy.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <h3>Shape it into an artifact</h3>
+            <p>Curate, edit, and structure the output into a polished PDF knowledge artifact. Add context, framing, and your own perspective. The curation process is the intellectual work — and it is yours.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <h3>Upload to the archive</h3>
+            <p>Create a creator profile and upload your artifact with a title, description, keywords, and price. The artifact gets its own permanent page in the Forbidden Gnosis archive — listed, discoverable, and ready to transact.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <h3>Send your audience here</h3>
+            <p>Share your artifact link through YouTube, X, newsletters, podcasts, or anywhere your audience follows you. Your archive page is the commerce layer behind your content. Every view becomes a potential transaction.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider">
+      <span class="divider-text">Revenue Model</span>
+    </div>
+
+    <!-- REVENUE -->
+    <section class="fade-up" aria-labelledby="revenue-heading" style="max-width:700px; margin:0 auto;">
+      <div class="section-heading">
+        <h2 id="revenue-heading">You Set the Price. We Share the Revenue.</h2>
+        <p>Creator-controlled pricing. Platform takes 20–30%. You keep the rest.</p>
+      </div>
+
+      <div class="revenue-grid mb-3">
+        <div class="revenue-card">
+          <p class="revenue-card-type">Short Insight</p>
+          <p class="revenue-card-range">$1–$5</p>
+          <p class="revenue-card-desc">Quick frameworks, prompt libraries, condensed theories</p>
+        </div>
+        <div class="revenue-card">
+          <p class="revenue-card-type">Substantive Guide</p>
+          <p class="revenue-card-range">$10–$25</p>
+          <p class="revenue-card-desc">Detailed research, operating systems, applied models</p>
+        </div>
+        <div class="revenue-card">
+          <p class="revenue-card-type">Major Research</p>
+          <p class="revenue-card-range">$30–$100+</p>
+          <p class="revenue-card-desc">Comprehensive dossiers, advanced philosophy, deep analysis</p>
+        </div>
+      </div>
+
+      <div class="fee-row">
+        <div>
+          <p class="fee-item-label">Sale Price</p>
+          <p class="fee-item-value">$10</p>
+        </div>
+        <span class="fee-arrow">→</span>
+        <div>
+          <p class="fee-item-label">Your Earnings</p>
+          <p class="fee-item-value gold">$7–$8</p>
+        </div>
+        <span class="fee-arrow">+</span>
+        <div>
+          <p class="fee-item-label">Platform Fee</p>
+          <p class="fee-item-value">$2–$3</p>
+        </div>
+      </div>
+
+      <p class="text-sm text-muted mt-2" style="text-align:center;">
+        Exact fee structure confirmed at launch. Founding Creators receive preferential rates.
+      </p>
+    </section>
+
+    <div class="divider">
+      <span class="divider-text">Founding Creator Program</span>
+    </div>
+
+    <!-- FOUNDING CREATOR -->
+    <section class="fade-up" aria-labelledby="founding-heading">
+      <div class="founding-card">
+        <p class="label mb-2">Limited · First 500 Creators</p>
+        <h2 id="founding-heading">Founding Creator Status</h2>
+        <p>
+          The first 500 creators to publish on Forbidden Gnosis will receive permanent Founding Creator status — a recognition that compounds over time as the archive grows around the work they built first.
+        </p>
+        <div class="founding-benefits">
+          <span class="founding-badge">Reduced platform fee (permanent)</span>
+          <span class="founding-badge">Founding Creator badge on profile</span>
+          <span class="founding-badge">Featured placement at archive launch</span>
+          <span class="founding-badge">Membership residual participation</span>
+          <span class="founding-badge">Archive royalty share consideration</span>
+          <span class="founding-badge">Direct access to platform development</span>
+        </div>
+        <p>
+          The earlier you publish, the more membership-share you may capture before the archive saturates. Early creators build the archive. The archive makes every creator more valuable.
+        </p>
+        <a href="./index.html#waitlist" class="btn btn-gold mt-3">Register for Early Access</a>
+      </div>
+    </section>
+
+    <div class="divider">
+      <span class="divider-text">What Qualifies as an Artifact</span>
+    </div>
+
+    <!-- ARTIFACT TYPES -->
+    <section class="fade-up" aria-labelledby="types-heading">
+      <div class="section-heading" style="text-align:center;">
+        <h2 id="types-heading">Infinite Knowledge Domains</h2>
+        <p>If it was developed through AI collaboration and organized into a coherent document — it qualifies.</p>
+      </div>
+      <div class="types-grid">
+        <div class="type-card">
+          <p class="type-card-icon">⬡</p>
+          <p class="type-card-name">Frameworks</p>
+          <p class="type-card-desc">Operating models, decision systems, mental models developed with AI</p>
+        </div>
+        <div class="type-card">
+          <p class="type-card-icon">◉</p>
+          <p class="type-card-name">Philosophy</p>
+          <p class="type-card-desc">Speculative theories, consciousness models, ethical frameworks</p>
+        </div>
+        <div class="type-card">
+          <p class="type-card-icon">▦</p>
+          <p class="type-card-name">Research</p>
+          <p class="type-card-desc">AI-synthesized research on history, science, civilization, futures</p>
+        </div>
+        <div class="type-card">
+          <p class="type-card-icon">≋</p>
+          <p class="type-card-name">Prompt Libraries</p>
+          <p class="type-card-desc">Curated prompt collections and human–AI interface methodologies</p>
+        </div>
+        <div class="type-card">
+          <p class="type-card-icon">◬</p>
+          <p class="type-card-name">Speculative Theory</p>
+          <p class="type-card-desc">Future models, AI alignment scenarios, post-human concepts</p>
+        </div>
+        <div class="type-card">
+          <p class="type-card-icon">✦</p>
+          <p class="type-card-name">Applied Knowledge</p>
+          <p class="type-card-desc">Startup frameworks, governance models, strategy documents</p>
+        </div>
+      </div>
+      <p class="text-sm text-muted mt-3" style="text-align:center; max-width:540px; margin-left:auto; margin-right:auto;">
+        Each creator is encouraged to offer at least one free artifact — a trust-building gateway that invites readers into deeper work.
+      </p>
+    </section>
+
+    <div class="divider">
+      <span class="divider-text">Common Questions</span>
+    </div>
+
+    <!-- FAQ -->
+    <section class="fade-up" aria-labelledby="faq-heading" style="max-width:680px; margin:0 auto;">
+      <div class="faq">
+        <div class="faq-item">
+          <p class="faq-q">Do I own the content I publish?</p>
+          <p class="faq-a">Yes. Creators retain full intellectual property rights over their submitted works. By publishing on Forbidden Gnosis, you grant the platform a license to host and distribute your artifact through the marketplace — but ownership remains with you.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Can I publish content generated entirely by AI?</p>
+          <p class="faq-a">The platform is designed for human–AI collaboration artifacts — meaning you brought the inquiry, the curation, the framing, and the intellectual direction. Raw, unedited AI outputs are not the intended format. The creator's perspective is what differentiates an artifact from a log dump.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">When will the creator portal launch?</p>
+          <p class="faq-a">The platform is in pre-launch. Join the waitlist to be notified the moment creator uploads open. Founding Creator status is reserved exclusively for early registrants who publish within the first cohort window.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Can I publish on other platforms simultaneously?</p>
+          <p class="faq-a">Yes. Forbidden Gnosis does not require exclusivity. You can sell the same artifact on Gumroad, your own site, or anywhere else. The archive is an additional channel — not a replacement for existing distribution.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="fade-up" style="text-align:center; padding: 3rem 0 2rem;">
+      <p class="label mb-2">The Archive Is Being Built</p>
+      <p style="font-family:'Cormorant Garamond',serif; font-size:clamp(1.375rem,3.5vw,1.875rem); font-weight:600; color:var(--cream); max-width:520px; margin:0 auto 1.5rem; line-height:1.35;">
+        The first 500 creators build the archive everyone else discovers.
+      </p>
+      <a href="./index.html#waitlist" class="btn btn-gold btn-lg">Register for Early Access</a>
+    </section>
+
+  </div><!-- /page -->
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-main">
+      <div>
+        <span class="footer-brand-name">Forbidden Gnosis</span>
+        <span class="footer-tagline">The Archive of Human–AI Knowledge</span>
+        <p class="footer-brand-desc">A digital marketplace and archive for knowledge artifacts discovered through human–AI collaboration.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="./artifacts.html">Archive</a></li>
+            <li><a href="./manifesto.html">Manifesto</a></li>
+            <li><a href="./creators.html">Creators</a></li>
+            <li><a href="./index.html#waitlist">Join Waitlist</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="./terms.html">Terms</a></li>
+            <li><a href="./privacy.html">Privacy</a></li>
+            <li><a href="./refunds.html">Refunds</a></li>
+            <li><a href="./disclaimer.html">Disclaimer</a></li>
+            <li><a href="./affiliates.html">Affiliates</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">&copy; 2026 House of Terravian. All Rights Reserved.</p>
+      <div class="footer-domains">
+        <a href="https://ForbiddenGnosis.com" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.com</a>
+        <span class="sep">·</span>
+        <a href="https://ForbiddenGnosis.io" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.io</a>
+        <span class="sep">·</span>
+        <a href="https://ForbiddenGnosis.app" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.app</a>
+      </div>
+      <p class="footer-noo">
+        Part of the <span class="grad-gold">Noo World OS</span> —
+        powered by <span class="grad-pink">Noo World Login</span> and
+        <span class="grad-blue">Noo World Platforms</span>.
+      </p>
+    </div>
+  </footer>
+
+  <script src="./script.js" defer></script>
+</body>
+</html>

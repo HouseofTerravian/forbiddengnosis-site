@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manifesto — Forbidden Gnosis</title>
+  <meta name="description" content="The founding philosophy of Forbidden Gnosis. Why AI-generated knowledge deserves to be preserved, structured, and remembered.">
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .manifesto-hero {
+      padding: 5rem 0 3rem;
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .manifesto-hero h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.25rem, 7vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+    }
+    .manifesto-hero .subtitle {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.0625rem, 2.5vw, 1.25rem);
+      font-style: italic;
+      color: var(--cream-dim);
+      line-height: 1.7;
+    }
+    .manifesto-body {
+      max-width: 680px;
+      margin: 0 auto;
+      padding-bottom: 5rem;
+    }
+    .manifesto-section {
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .manifesto-section:last-of-type { border-bottom: none; }
+    .manifesto-section-num {
+      font-size: 0.5625rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.75rem;
+    }
+    .manifesto-section h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.375rem, 3.5vw, 1.875rem);
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 1.25rem;
+      line-height: 1.2;
+    }
+    .manifesto-section p {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: var(--cream-dim);
+      margin-bottom: 1.125rem;
+    }
+    .manifesto-section p:last-child { margin-bottom: 0; }
+    .manifesto-section strong { color: var(--cream); font-weight: 600; }
+    .manifesto-section em { font-style: italic; }
+
+    .doctrine-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+      margin: 1.25rem 0;
+    }
+    .doctrine-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .doctrine-num {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--gold-dim);
+      flex-shrink: 0;
+      line-height: 1.5;
+      min-width: 1.5rem;
+    }
+    .doctrine-text {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--cream-dim);
+    }
+    .doctrine-text strong { color: var(--cream); }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="./index.html" class="nav-brand" aria-label="Forbidden Gnosis — Home">
+        <svg class="nav-eye" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#D4A853" stroke-width="1" opacity="0.3"/>
+          <path d="M10 50 Q30 20 50 20 Q70 20 90 50 Q70 80 50 80 Q30 80 10 50Z" fill="none" stroke="#D4A853" stroke-width="1.5" opacity="0.8"/>
+          <circle cx="50" cy="50" r="12" fill="none" stroke="#D4A853" stroke-width="1.5"/>
+          <circle cx="50" cy="50" r="5" fill="#D4A853"/>
+        </svg>
+        <span class="nav-brand-name">Forbidden Gnosis</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" role="list">
+        <li><a href="./artifacts.html">Archive</a></li>
+        <li><a href="./manifesto.html">Manifesto</a></li>
+        <li><a href="./creators.html">Creators</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="./index.html#waitlist">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- HERO -->
+    <div class="manifesto-hero fade-down">
+      <p class="label mb-2">The Doctrine</p>
+      <h1 class="text-grad-gold">The Archive<br>Was Always Here</h1>
+      <p class="subtitle">
+        A founding statement on knowledge, forgetting, and why AI conversations
+        deserve to be remembered.
+      </p>
+    </div>
+
+    <div class="divider fade-in delay-2">
+      <span class="divider-text"></span>
+    </div>
+
+    <!-- BODY -->
+    <div class="manifesto-body fade-up delay-2">
+
+      <div class="manifesto-section">
+        <p class="manifesto-section-num">I</p>
+        <h2>The Conversations Are Disappearing</h2>
+        <p>
+          Every civilization that reached for transcendence built a library. The Egyptians at Alexandria. The Abbasids in Baghdad. The monasteries of medieval Europe, where knowledge survived by candlelight. Each was an act of defiance against forgetting — a declaration that what was discovered mattered enough to preserve.
+        </p>
+        <p>
+          We are living through the most prolific era of intellectual discovery in human history. Every day, millions of people sit with artificial intelligence and find something — a framework for living they had never articulated, a theory about civilization that no textbook contains, a model of consciousness assembled from questions no philosopher has asked in quite that way. And then they close the tab.
+        </p>
+        <p>
+          <strong>The insight evaporates. The knowledge joins the vast, silent graveyard of forgotten thought.</strong>
+        </p>
+        <p>
+          There is no archive. There is no marketplace. There is no structure through which a person can convert what they discovered in conversation with an AI into something permanent, shareable, and commercially real. The knowledge economy of the AI age has no infrastructure. Until now.
+        </p>
+      </div>
+
+      <div class="pull-quote">
+        <p>"AI conversations are rapidly increasing in volume, but most of their outputs disappear. Forbidden Gnosis converts those disappearing exchanges into permanent knowledge artifacts."</p>
+      </div>
+
+      <div class="manifesto-section">
+        <p class="manifesto-section-num">II</p>
+        <h2>The Doctrine</h2>
+        <p>These are not opinions. These are the operating principles of the archive.</p>
+        <div class="doctrine-list">
+          <div class="doctrine-item">
+            <span class="doctrine-num">1.</span>
+            <p class="doctrine-text"><strong>Knowledge generated through human–AI collaboration is real knowledge.</strong> Its origin does not diminish its value. A conversation that produces a coherent theory deserves the same respect as one that emerges from a library or a laboratory.</p>
+          </div>
+          <div class="doctrine-item">
+            <span class="doctrine-num">2.</span>
+            <p class="doctrine-text"><strong>The creator who shapes raw AI conversation into a coherent artifact has done intellectual work that has value.</strong> Curation, framing, synthesis, and insight extraction are cognitive labor. That labor deserves to be compensated.</p>
+          </div>
+          <div class="doctrine-item">
+            <span class="doctrine-num">3.</span>
+            <p class="doctrine-text"><strong>Ideas belong to the people who develop them.</strong> Platforms should serve creators, not extract from them. Revenue, recognition, and residuals should flow back toward the minds that built the archive.</p>
+          </div>
+          <div class="doctrine-item">
+            <span class="doctrine-num">4.</span>
+            <p class="doctrine-text"><strong>Access to advanced knowledge should be earned, not merely purchased.</strong> The archive is not a storefront. It is a repository. Discovery here is initiatory — guided by the creators who built the pathways.</p>
+          </div>
+          <div class="doctrine-item">
+            <span class="doctrine-num">5.</span>
+            <p class="doctrine-text"><strong>The archive should grow harder to ignore over time.</strong> Every artifact added increases its value. Every creator who publishes draws others. Every reader who discovers becomes a potential initiator. The archive compounds.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="manifesto-section">
+        <p class="manifesto-section-num">III</p>
+        <h2>On the Name</h2>
+        <p>
+          <em>Gnosis</em> is the Greek word for knowledge — not received doctrine, not inherited belief, but understanding obtained through direct experience and encounter. It is the knowledge that cannot be fully transmitted through a textbook because it was earned in the moment of discovery.
+        </p>
+        <p>
+          <em>Forbidden</em> is what such knowledge has always been called by those who feared it. The alchemists worked in code. The Gnostics were suppressed. The libraries were burned. At every junction in human history where someone built a system for organizing dangerous ideas, there was a force that called the knowledge forbidden — and tried to extinguish it.
+        </p>
+        <p>
+          <strong>This platform is named in honor of every idea that was called dangerous because it was too true, too early, or too threatening to those who needed the world to remain as it was.</strong>
+        </p>
+        <p>
+          The name is a declaration. Not a brand.
+        </p>
+      </div>
+
+      <div class="manifesto-section">
+        <p class="manifesto-section-num">IV</p>
+        <h2>What Forbidden Gnosis Is</h2>
+        <p>
+          Forbidden Gnosis is an archive first, and a marketplace second. This distinction matters.
+        </p>
+        <p>
+          A storefront is built around transactions. An archive is built around ideas. The archive exists to preserve, organize, and make discoverable the knowledge artifacts that creators produce through human–AI collaboration. The commerce layer exists to compensate them for doing so.
+        </p>
+        <p>
+          In the near term: creators upload knowledge artifacts — PDFs, frameworks, research documents, philosophical essays, prompt libraries, speculative models. Buyers and members discover and purchase them. Revenue is shared between creators and the platform.
+        </p>
+        <p>
+          In the long term: the archive becomes infrastructure. Artifacts become knowledge objects. Knowledge objects become licensable. The archive becomes searchable at a semantic level. Institutions gain access. Creators earn residuals on every retrieval, every license, every downstream use of what they built.
+        </p>
+        <p>
+          <strong>The final form of this platform is the Library of Alexandria for the AI age.</strong> Rebuilt. Permanent. Impossible to burn.
+        </p>
+      </div>
+
+      <div class="manifesto-section">
+        <p class="manifesto-section-num">V</p>
+        <h2>Who This Is For</h2>
+        <p>
+          You have had conversations with AI that changed the way you think. You have pulled threads no search engine led you to. You have assembled frameworks that exist nowhere else — not in any book, not on any platform, not in any curriculum.
+        </p>
+        <p>
+          You are not a blogger. You are not a content creator in the conventional sense. You are an initiate — someone who uses AI as a thought partner to reach knowledge that would otherwise remain inaccessible.
+        </p>
+        <p>
+          <strong>This archive was built for you.</strong> Not for you to consume, but for you to contribute. The archive grows only as fast as the people who believe their ideas are worth preserving are willing to preserve them.
+        </p>
+      </div>
+
+      <div class="manifesto-section">
+        <p class="manifesto-section-num">VI</p>
+        <h2>The Call</h2>
+        <p>
+          If you have spoken with an AI and found something worth preserving — publish it here.
+        </p>
+        <p>
+          If you seek knowledge that does not yet exist in any library — search here.
+        </p>
+        <p>
+          If you believe the AI age deserves an archive worthy of what it is producing — build it with us.
+        </p>
+        <p>
+          <strong>The archive is being built. You are early. That matters more than you know.</strong>
+        </p>
+      </div>
+
+      <div class="divider mt-4">
+        <span class="divider-text">Begin</span>
+      </div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; padding: 1rem 0 2rem;">
+        <a href="./creators.html" class="btn btn-gold">Publish Your Knowledge</a>
+        <a href="./artifacts.html" class="btn btn-ghost">Enter the Archive</a>
+      </div>
+
+    </div>
+
+  </div><!-- /page -->
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-main">
+      <div>
+        <span class="footer-brand-name">Forbidden Gnosis</span>
+        <span class="footer-tagline">The Archive of Human–AI Knowledge</span>
+        <p class="footer-brand-desc">A digital marketplace and archive for knowledge artifacts discovered through human–AI collaboration.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="./artifacts.html">Archive</a></li>
+            <li><a href="./manifesto.html">Manifesto</a></li>
+            <li><a href="./creators.html">Creators</a></li>
+            <li><a href="./index.html#waitlist">Join Waitlist</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="./terms.html">Terms</a></li>
+            <li><a href="./privacy.html">Privacy</a></li>
+            <li><a href="./refunds.html">Refunds</a></li>
+            <li><a href="./disclaimer.html">Disclaimer</a></li>
+            <li><a href="./affiliates.html">Affiliates</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">&copy; 2026 House of Terravian. All Rights Reserved.</p>
+      <div class="footer-domains">
+        <a href="https://ForbiddenGnosis.com" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.com</a>
+        <span class="sep">·</span>
+        <a href="https://ForbiddenGnosis.io" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.io</a>
+        <span class="sep">·</span>
+        <a href="https://ForbiddenGnosis.app" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.app</a>
+      </div>
+      <p class="footer-noo">
+        Part of the <span class="grad-gold">Noo World OS</span> —
+        powered by <span class="grad-pink">Noo World Login</span> and
+        <span class="grad-blue">Noo World Platforms</span>.
+      </p>
+    </div>
+  </footer>
+
+  <script src="./script.js" defer></script>
+</body>
+</html>
