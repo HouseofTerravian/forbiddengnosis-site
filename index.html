@@ -417,6 +417,8 @@
     </div>
   </footer>
 
+  <script src="./data/creators.js"></script>
+  <script src="./js/chamber.js"></script>
   <script src="./script.js" defer></script>
   <script>
     const CK_FORM_ID = '9180283';
@@ -462,6 +464,13 @@
       const tf = document.createElement('input');
       tf.type = 'hidden'; tf.name = 'fields[tag]'; tf.value = 'mirror-gate-waitlist';
       tmp.append(ef, tf);
+      // Inject attribution tag if visitor arrived through a creator's chamber
+      var attrSlug = window.FG && window.FG.getAttributionSlug ? window.FG.getAttributionSlug() : null;
+      if (attrSlug) {
+        var af = document.createElement('input');
+        af.type = 'hidden'; af.name = 'fields[referred_by]'; af.value = attrSlug;
+        tmp.appendChild(af);
+      }
       document.body.appendChild(tmp);
       tmp.submit();
       document.body.removeChild(tmp);
