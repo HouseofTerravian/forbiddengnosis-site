@@ -209,6 +209,69 @@
       margin-bottom: 0.5rem;
     }
     .section-heading p { font-size: 0.9375rem; color: var(--muted); }
+
+    /* Creator directory */
+    .creator-dir-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    @media (max-width: 600px) { .creator-dir-grid { grid-template-columns: 1fr; } }
+    .creator-dir-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .creator-dir-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+    .creator-dir-top { display: flex; align-items: flex-start; gap: 0.875rem; }
+    .creator-dir-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), var(--violet-light));
+      border: 1px solid rgba(107, 63, 160, 0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.125rem; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .creator-dir-meta { flex: 1; }
+    .creator-dir-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.125rem; font-weight: 700; color: var(--cream);
+      margin-bottom: 0.2rem;
+    }
+    .creator-dir-badge {
+      display: inline-flex; align-items: center;
+      background: rgba(212, 168, 83, 0.1);
+      border: 1px solid rgba(212, 168, 83, 0.28);
+      color: var(--gold-dim);
+      font-size: 0.5rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 0.15rem 0.4rem; border-radius: 4px;
+    }
+    .creator-dir-bio { font-size: 0.8125rem; color: var(--muted); line-height: 1.6; }
+    .creator-dir-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 0.875rem; border-top: 1px solid var(--border);
+    }
+    .creator-dir-count { font-size: 0.6875rem; color: var(--muted); }
+    .creator-dir-count span { color: var(--gold-dim); font-weight: 600; }
+    .creator-dir-link {
+      font-size: 0.75rem; font-weight: 600; color: var(--gold);
+      display: flex; align-items: center; gap: 0.3rem;
+      transition: gap 0.2s;
+    }
+    .creator-dir-link:hover { gap: 0.5rem; }
+    .creator-dir-empty {
+      text-align: center; padding: 3rem 1rem;
+      font-size: 0.9375rem; color: var(--muted);
+      max-width: 700px; margin: 0 auto;
+    }
   </style>
 </head>
 <body>
@@ -248,6 +311,18 @@
       <h1 class="text-grad-gold">Publish Your Knowledge.<br>Own Your Ideas.</h1>
       <p>Turn AI conversations into structured knowledge artifacts. Sell them globally. Earn from the archive you help build.</p>
     </div>
+
+    <div class="divider fade-in delay-1">
+      <span class="divider-text">Active Creators</span>
+    </div>
+
+    <!-- CREATOR DIRECTORY (rendered from FG_CREATORS) -->
+    <section class="fade-up delay-1" aria-labelledby="directory-heading">
+      <p class="label text-center mb-3" id="directory-heading">Creators in the Archive</p>
+      <div id="creator-directory">
+        <!-- Populated by inline script -->
+      </div>
+    </section>
 
     <div class="divider fade-in delay-1">
       <span class="divider-text">How It Works</span>
@@ -496,6 +571,47 @@
     </div>
   </footer>
 
+  <script src="./data/creators.js"></script>
+  <script src="./js/chamber.js"></script>
   <script src="./script.js" defer></script>
+  <script>
+    (function () {
+      var dir = document.getElementById('creator-directory');
+      if (!dir || !window.FG_CREATORS) return;
+
+      var slugs   = Object.keys(window.FG_CREATORS);
+      var esc     = window.FG ? window.FG.escapeHtml : function (s) { return String(s); };
+      var html    = '';
+
+      slugs.forEach(function (slug) {
+        var c         = window.FG_CREATORS[slug];
+        var published = (c.artifacts || []).filter(function (a) { return a.published; }).length;
+        html +=
+          '<div class="creator-dir-card">' +
+            '<div class="creator-dir-top">' +
+              '<div class="creator-dir-avatar">' + esc(c.avatarInitials) + '</div>' +
+              '<div class="creator-dir-meta">' +
+                (c.founding ? '<span class="creator-dir-badge">Founding Creator</span><br>' : '') +
+                '<p class="creator-dir-name">' + esc(c.displayName) + '</p>' +
+              '</div>' +
+            '</div>' +
+            '<p class="creator-dir-bio">' + esc(c.shortBio) + '</p>' +
+            '<div class="creator-dir-footer">' +
+              '<p class="creator-dir-count"><span>' + published + '</span> artifact' + (published !== 1 ? 's' : '') + ' published</p>' +
+              '<a href="./chamber.html?via=' + esc(c.slug) + '" class="creator-dir-link">' +
+                'Enter Chamber' +
+                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' +
+              '</a>' +
+            '</div>' +
+          '</div>';
+      });
+
+      if (!html) {
+        html = '<div class="creator-dir-empty">No creators have published yet. Be the first.</div>';
+      }
+
+      dir.innerHTML = '<div class="creator-dir-grid">' + html + '</div>';
+    })();
+  </script>
 </body>
 </html>

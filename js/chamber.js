@@ -204,6 +204,15 @@
     });
   }
 
+  /* ── ANALYTICS ── */
+  /* Fires custom Plausible events if the Plausible script is loaded on the page */
+
+  function track(eventName, props) {
+    if (typeof window.plausible === 'function') {
+      window.plausible(eventName, { props: props || {} });
+    }
+  }
+
   /* ── PUBLIC API ── */
 
   window.FG = {
@@ -222,7 +231,10 @@
     /* Used by index.html ConvertKit handler to inject attribution */
     getAttributionSlug: function () {
       return readChamberSession();
-    }
+    },
+
+    /* Fire a named analytics event (no-op if Plausible not loaded) */
+    track: track
   };
 
   /* ── AUTO-INIT ── */
@@ -232,8 +244,10 @@
 
     // On any ?via= arrival, write attribution and activate session
     if (viaSlug && window.FG_CREATORS && window.FG_CREATORS[viaSlug]) {
+      var isNewSession = !readChamberSession();
       writeAttribution(viaSlug);
       activateChamberSession(viaSlug);
+      if (isNewSession) track('chamber_entry', { creator: viaSlug });
     }
 
     var creator = resolveCreator();
@@ -251,6 +265,7 @@
         decorateLinks(creator.slug);
       } else {
         renderGateWall();
+        track('gate_wall_shown');
       }
       return;
     }

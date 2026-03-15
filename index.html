@@ -482,6 +482,8 @@
         btnText.textContent = 'Notify Me';
         successCheck.style.display = 'block';
         showStatus('success', "You're registered. Watch for the signal.");
+        var attrSlug = window.FG && window.FG.getAttributionSlug ? window.FG.getAttributionSlug() : null;
+        if (window.FG) window.FG.track('waitlist_signup', attrSlug ? { referred_by: attrSlug } : {});
         setTimeout(function () {
           emailInput.value = '';
           successCheck.style.display = 'none';

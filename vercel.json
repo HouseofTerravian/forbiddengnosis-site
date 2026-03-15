@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/c/:slug", "destination": "/chamber.html?via=:slug" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
