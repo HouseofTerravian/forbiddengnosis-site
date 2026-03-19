@@ -541,6 +541,7 @@
             <li><a href="./manifesto.html">Manifesto</a></li>
             <li><a href="./creators.html">Creators</a></li>
             <li><a href="./index.html#waitlist">Join Waitlist</a></li>
+            <li><a href="./create.html">Create Artifact</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -587,6 +588,15 @@
       slugs.forEach(function (slug) {
         var c         = window.FG_CREATORS[slug];
         var published = (c.artifacts || []).filter(function (a) { return a.published; }).length;
+        var total     = (c.artifacts || []).length;
+        var joinDate  = '';
+        if (c.joinedEpoch) {
+          var d = new Date(c.joinedEpoch);
+          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          joinDate = months[d.getMonth()] + ' ' + d.getFullYear();
+        }
+        var collectionsCount = (c.collections || []).length;
+
         html +=
           '<div class="creator-dir-card">' +
             '<div class="creator-dir-top">' +
@@ -594,11 +604,17 @@
               '<div class="creator-dir-meta">' +
                 (c.founding ? '<span class="creator-dir-badge">Founding Creator</span><br>' : '') +
                 '<p class="creator-dir-name">' + esc(c.displayName) + '</p>' +
+                (joinDate ? '<p style="font-size:0.625rem;color:var(--muted);margin-top:0.15rem;">Joined ' + joinDate + '</p>' : '') +
               '</div>' +
             '</div>' +
             '<p class="creator-dir-bio">' + esc(c.shortBio) + '</p>' +
+            '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;">' +
+              '<span style="font-size:0.625rem;font-weight:600;color:var(--gold-dim);background:var(--gold-glow);border:1px solid rgba(212,168,83,0.2);padding:0.15rem 0.45rem;border-radius:4px;">' + published + ' published</span>' +
+              (total > published ? '<span style="font-size:0.625rem;font-weight:500;color:var(--muted);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:0.15rem 0.45rem;border-radius:4px;">' + (total - published) + ' archiving</span>' : '') +
+              (collectionsCount > 0 ? '<span style="font-size:0.625rem;font-weight:500;color:var(--violet-light);background:rgba(107,63,160,0.1);border:1px solid rgba(107,63,160,0.2);padding:0.15rem 0.45rem;border-radius:4px;">' + collectionsCount + ' collection' + (collectionsCount !== 1 ? 's' : '') + '</span>' : '') +
+            '</div>' +
             '<div class="creator-dir-footer">' +
-              '<p class="creator-dir-count"><span>' + published + '</span> artifact' + (published !== 1 ? 's' : '') + ' published</p>' +
+              '<p class="creator-dir-count"><span>' + total + '</span> artifact' + (total !== 1 ? 's' : '') + ' total</p>' +
               '<a href="./chamber.html?via=' + esc(c.slug) + '" class="creator-dir-link">' +
                 'Enter Chamber' +
                 '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' +

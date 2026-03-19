@@ -64,6 +64,7 @@
       border-color: var(--gold-dim);
     }
     .search-input::placeholder { color: #3a3a4a; }
+    .search-input:disabled { opacity: 0.5; cursor: not-allowed; }
     .search-gate-note {
       font-size: 0.6875rem;
       color: var(--muted);
@@ -72,6 +73,46 @@
     }
     .search-gate-note a { color: var(--gold-dim); text-decoration: underline; text-underline-offset: 2px; }
     .search-gate-note a:hover { color: var(--gold); }
+
+    /* Search lock overlay */
+    .search-lock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1rem;
+      background: rgba(107, 63, 160, 0.08);
+      border: 1px solid rgba(107, 63, 160, 0.2);
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .search-lock-icon {
+      width: 14px; height: 14px;
+      color: var(--violet-light);
+      flex-shrink: 0;
+    }
+    .search-lock-text {
+      font-size: 0.75rem;
+      color: var(--cream-dim);
+    }
+    .search-lock-text a { color: var(--gold-dim); text-decoration: underline; text-underline-offset: 2px; }
+    .search-lock-text a:hover { color: var(--gold); }
+    .search-unlocked { display: none; }
+
+    /* No results */
+    .no-results {
+      text-align: center;
+      padding: 3rem 1rem;
+      display: none;
+    }
+    .no-results p {
+      font-size: 0.9375rem;
+      color: var(--muted);
+    }
+    .no-results.visible { display: block; }
 
     /* Gate notice */
     .gate-notice {
@@ -110,16 +151,18 @@
       background: transparent;
       border: 1px solid var(--border);
       border-radius: 20px;
-      cursor: not-allowed;
-      opacity: 0.6;
+      cursor: pointer;
       font-family: 'Inter', sans-serif;
       transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      border-color: rgba(212, 168, 83, 0.3);
+      color: var(--cream);
     }
     .filter-btn.active {
       color: var(--gold);
       border-color: rgba(212, 168, 83, 0.35);
       background: var(--gold-glow);
-      opacity: 1;
     }
 
     /* Artifacts grid */
@@ -237,10 +280,20 @@
         <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
-        <input type="search" class="search-input" placeholder="Search knowledge, creators, topics…" disabled aria-label="Archive search (available with membership)">
+        <input type="search" id="archiveSearch" class="search-input" placeholder="Search knowledge, creators, topics…" disabled aria-label="Archive search (available with membership)">
       </div>
-      <p class="search-gate-note">
-        Full archive search requires <a href="./index.html">membership</a>. Free artifact pages are open to all.
+      <!-- Lock (shown for non-members) -->
+      <div id="searchLock" class="search-lock">
+        <svg class="search-lock-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+        </svg>
+        <span class="search-lock-text">
+          Archive search requires <a href="./index.html">membership</a>. Enter through a <a href="./creators.html">creator's chamber</a> to browse freely.
+        </span>
+      </div>
+      <!-- Unlocked note (shown for members) -->
+      <p id="searchNote" class="search-gate-note" style="display:none;">
+        Search within this chamber. <a href="./index.html#waitlist">Full membership</a> unlocks the entire archive.
       </p>
     </div>
 
@@ -257,100 +310,26 @@
     </div>
 
     <!-- FILTERS -->
-    <div class="filter-row fade-in delay-2 mb-3" style="max-width:860px; margin:0 auto 1.5rem;" aria-label="Category filters (coming soon)">
+    <div id="filterRow" class="filter-row fade-in delay-2 mb-3" style="max-width:860px; margin:0 auto 1.5rem;" aria-label="Category filters">
       <span class="filter-label">Filter:</span>
-      <button class="filter-btn active" disabled>All</button>
-      <button class="filter-btn" disabled>Philosophy</button>
-      <button class="filter-btn" disabled>AI &amp; Technology</button>
-      <button class="filter-btn" disabled>Consciousness</button>
-      <button class="filter-btn" disabled>Governance</button>
-      <button class="filter-btn" disabled>Spirituality</button>
-      <button class="filter-btn" disabled>Prompt Engineering</button>
+      <button class="filter-btn active" data-category="all">All</button>
+      <!-- Remaining buttons injected from FG_CATEGORIES -->
     </div>
 
     <!-- ARCHIVE BAR -->
     <div class="archive-bar">
-      <p class="archive-count">Showing <span>1</span> published artifact — archive growing</p>
+      <p id="archiveCount" class="archive-count">Showing <span>0</span> artifacts</p>
       <span class="archive-growing">Archive seeding in progress</span>
     </div>
 
+    <!-- NO RESULTS -->
+    <div id="noResults" class="no-results" role="status" aria-live="polite">
+      <p>No artifacts match your search or filter.</p>
+    </div>
+
     <!-- ARTIFACTS GRID -->
-    <div class="artifacts-grid fade-up delay-2">
-
-      <!-- REAL ARTIFACT: The First Forbidden Artifact -->
-      <div class="artifact-card">
-        <p class="artifact-card-tag">Proof-of-Concept · Vol. I</p>
-        <p class="artifact-card-title">The First Forbidden Artifact</p>
-        <p class="artifact-card-desc">
-          A founding document introducing the philosophy of AI-generated knowledge and the monetization logic of Forbidden Gnosis. 12 pages. The first entry in the archive. Archived on the Wayback Machine.
-        </p>
-        <div class="artifact-card-footer">
-          <span class="artifact-card-creator">House of Terravian</span>
-          <a href="./artifact.html?id=first-forbidden-artifact" style="color:var(--gold); font-size:0.875rem; font-weight:600; text-decoration:none;">$1 — Unlock</a>
-        </div>
-      </div>
-
-      <!-- SEED ARTIFACTS (coming soon) -->
-      <div class="artifact-card artifact-card-coming" aria-hidden="true">
-        <p class="artifact-card-tag">Civilization · Theory</p>
-        <p class="artifact-card-title">AI Civilization Collapse Scenarios</p>
-        <p class="artifact-card-desc">
-          A structured analysis of civilizational risk patterns derived from AI modeling and historical synthesis.
-        </p>
-        <div class="artifact-card-footer">
-          <span class="artifact-card-creator">—</span>
-          <span class="artifact-card-status">Pending</span>
-        </div>
-      </div>
-
-      <div class="artifact-card artifact-card-coming" aria-hidden="true">
-        <p class="artifact-card-tag">Philosophy · Consciousness</p>
-        <p class="artifact-card-title">The Consciousness Problem: A Framework for the AI Age</p>
-        <p class="artifact-card-desc">
-          An inquiry into the nature of machine consciousness and its implications for human identity and rights.
-        </p>
-        <div class="artifact-card-footer">
-          <span class="artifact-card-creator">—</span>
-          <span class="artifact-card-status">Pending</span>
-        </div>
-      </div>
-
-      <div class="artifact-card artifact-card-coming" aria-hidden="true">
-        <p class="artifact-card-tag">Craft · Methodology</p>
-        <p class="artifact-card-title">Sacred Prompt Engineering</p>
-        <p class="artifact-card-desc">
-          The hidden science of human–AI discourse. How intent, framing, and inquiry structure shape the quality of AI-generated insight.
-        </p>
-        <div class="artifact-card-footer">
-          <span class="artifact-card-creator">—</span>
-          <span class="artifact-card-status">Pending</span>
-        </div>
-      </div>
-
-      <div class="artifact-card artifact-card-coming" aria-hidden="true">
-        <p class="artifact-card-tag">History · Research</p>
-        <p class="artifact-card-title">Hidden Patterns: What AI Found in Human History</p>
-        <p class="artifact-card-desc">
-          An AI-generated synthesis of recurring civilizational patterns that mainstream historiography has not fully assembled.
-        </p>
-        <div class="artifact-card-footer">
-          <span class="artifact-card-creator">—</span>
-          <span class="artifact-card-status">Pending</span>
-        </div>
-      </div>
-
-      <div class="artifact-card artifact-card-coming" aria-hidden="true">
-        <p class="artifact-card-tag">Governance · Futures</p>
-        <p class="artifact-card-title">Governance Models for a Post-AI World</p>
-        <p class="artifact-card-desc">
-          Speculative frameworks for political, social, and institutional design in a world shaped by artificial general intelligence.
-        </p>
-        <div class="artifact-card-footer">
-          <span class="artifact-card-creator">—</span>
-          <span class="artifact-card-status">Pending</span>
-        </div>
-      </div>
-
+    <div id="artifactsGrid" class="artifacts-grid fade-up delay-2">
+      <!-- Rendered dynamically from data/creators.js -->
     </div>
 
     <!-- ARCHIVE CTA -->
@@ -381,6 +360,7 @@
             <li><a href="./manifesto.html">Manifesto</a></li>
             <li><a href="./creators.html">Creators</a></li>
             <li><a href="./index.html#waitlist">Join Waitlist</a></li>
+            <li><a href="./create.html">Create Artifact</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -415,5 +395,160 @@
   <script src="./data/creators.js"></script>
   <script src="./js/chamber.js"></script>
   <script src="./script.js" defer></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var esc = window.FG ? window.FG.escapeHtml : function (s) { return String(s); };
+
+      /* ── GATHER ALL ARTIFACTS FROM ALL CREATORS ── */
+      function gatherArtifacts() {
+        var all = [];
+        if (!window.FG_CREATORS) return all;
+        var slugs = Object.keys(window.FG_CREATORS);
+        for (var i = 0; i < slugs.length; i++) {
+          var c = window.FG_CREATORS[slugs[i]];
+          if (!c.artifacts) continue;
+          for (var j = 0; j < c.artifacts.length; j++) {
+            all.push({ artifact: c.artifacts[j], creator: c });
+          }
+        }
+        return all;
+      }
+
+      var allArtifacts   = gatherArtifacts();
+      var grid           = document.getElementById('artifactsGrid');
+      var countEl        = document.getElementById('archiveCount');
+      var filterRow      = document.getElementById('filterRow');
+      var searchInput    = document.getElementById('archiveSearch');
+      var searchLock     = document.getElementById('searchLock');
+      var searchNote     = document.getElementById('searchNote');
+      var noResults      = document.getElementById('noResults');
+      var activeCategory = 'all';
+      var searchQuery    = '';
+
+      /* ── CHECK MEMBER STATUS (chamber session = temporary membership proxy) ── */
+      var isMember = false;
+      try { isMember = !!sessionStorage.getItem('fg_chamber'); } catch (e) {}
+
+      if (isMember) {
+        searchInput.disabled = false;
+        searchInput.placeholder = 'Search artifacts, creators, tags\u2026';
+        searchLock.style.display = 'none';
+        searchNote.style.display = 'block';
+      }
+
+      /* ── RENDER FILTER BUTTONS FROM FG_CATEGORIES ── */
+      if (window.FG_CATEGORIES) {
+        var usedCategories = {};
+        for (var i = 0; i < allArtifacts.length; i++) {
+          var cat = allArtifacts[i].artifact.category;
+          if (cat) usedCategories[cat] = true;
+        }
+        for (var i = 0; i < window.FG_CATEGORIES.length; i++) {
+          var cat = window.FG_CATEGORIES[i];
+          if (!usedCategories[cat.id]) continue;
+          var btn = document.createElement('button');
+          btn.className = 'filter-btn';
+          btn.setAttribute('data-category', cat.id);
+          btn.textContent = cat.label;
+          filterRow.appendChild(btn);
+        }
+      }
+
+      /* ── FILTER CLICK HANDLER ── */
+      filterRow.addEventListener('click', function (e) {
+        var btn = e.target.closest('.filter-btn');
+        if (!btn) return;
+        activeCategory = btn.getAttribute('data-category');
+        filterRow.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        render();
+      });
+
+      /* ── SEARCH HANDLER ── */
+      searchInput.addEventListener('input', function () {
+        searchQuery = this.value.trim().toLowerCase();
+        render();
+      });
+
+      /* ── MATCH FUNCTION ── */
+      function matches(entry) {
+        var a = entry.artifact;
+        var c = entry.creator;
+
+        // Category filter
+        if (activeCategory !== 'all' && a.category !== activeCategory) return false;
+
+        // Search filter (only if member and has query)
+        if (searchQuery && isMember) {
+          var haystack = [
+            a.title, a.description, a.tag, c.displayName,
+            (a.tags || []).join(' '), a.category || ''
+          ].join(' ').toLowerCase();
+          if (haystack.indexOf(searchQuery) === -1) return false;
+        }
+
+        return true;
+      }
+
+      /* ── RENDER ── */
+      function render() {
+        var html = '';
+        var publishedCount = 0;
+        var visibleCount = 0;
+
+        for (var i = 0; i < allArtifacts.length; i++) {
+          var entry = allArtifacts[i];
+          var a = entry.artifact;
+          var c = entry.creator;
+
+          if (!matches(entry)) continue;
+          visibleCount++;
+
+          var isPublished = a.published;
+          if (isPublished) publishedCount++;
+
+          var comingClass = isPublished ? '' : ' artifact-card-coming';
+          var ariaHidden  = isPublished ? '' : ' aria-hidden="true"';
+
+          var footerRight = '';
+          if (isPublished) {
+            footerRight = '<a href="./artifact.html?id=' + esc(a.id) + '" style="color:var(--gold); font-size:0.875rem; font-weight:600; text-decoration:none;">' + esc(a.price) + ' \u2014 Unlock</a>';
+          } else {
+            footerRight = '<span class="artifact-card-status">Pending</span>';
+          }
+
+          html +=
+            '<div class="artifact-card' + comingClass + '"' + ariaHidden + ' data-category="' + esc(a.category || '') + '">' +
+              '<p class="artifact-card-tag">' + esc(a.tag) + '</p>' +
+              '<p class="artifact-card-title">' + esc(a.title) + '</p>' +
+              '<p class="artifact-card-desc">' + esc(a.description) + '</p>' +
+              '<div class="artifact-card-footer">' +
+                '<span class="artifact-card-creator">' + (isPublished ? esc(c.displayName) : '\u2014') + '</span>' +
+                footerRight +
+              '</div>' +
+            '</div>';
+        }
+
+        grid.innerHTML = html;
+
+        // Update count
+        var totalPublished = allArtifacts.filter(function (e) { return e.artifact.published; }).length;
+        countEl.innerHTML = 'Showing <span>' + publishedCount + '</span> published artifact' +
+          (publishedCount !== 1 ? 's' : '') + ' \u2014 archive growing';
+
+        // No results state
+        if (visibleCount === 0) {
+          noResults.classList.add('visible');
+        } else {
+          noResults.classList.remove('visible');
+        }
+      }
+
+      render();
+
+    })();
+  </script>
 </body>
 </html>

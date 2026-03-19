@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artifact Generator — Forbidden Gnosis</title>
+  <meta name="description" content="Convert your AI conversations into formatted Forbidden Gnosis knowledge artifacts. Paste, style, and download as PDF.">
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .gen-hero {
+      padding: 4rem 0 2rem;
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .gen-hero h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2rem, 6vw, 3.25rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+    .gen-hero p {
+      font-size: 0.9375rem;
+      color: var(--cream-dim);
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .gen-form {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .gen-field { display: flex; flex-direction: column; gap: 0.5rem; }
+    .gen-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+    .gen-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .gen-input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9375rem;
+      transition: border-color 0.25s;
+    }
+    .gen-input:focus {
+      outline: none;
+      border-color: var(--gold-dim);
+    }
+    .gen-input::placeholder { color: #3a3a4a; }
+
+    .gen-textarea {
+      width: 100%;
+      min-height: 360px;
+      padding: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      line-height: 1.8;
+      resize: vertical;
+      transition: border-color 0.25s;
+    }
+    .gen-textarea:focus {
+      outline: none;
+      border-color: var(--gold-dim);
+    }
+    .gen-textarea::placeholder { color: #3a3a4a; }
+
+    .gen-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 520px) { .gen-row { grid-template-columns: 1fr; } }
+
+    .gen-select {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9375rem;
+      transition: border-color 0.25s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+    .gen-select:focus {
+      outline: none;
+      border-color: var(--gold-dim);
+    }
+
+    .gen-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 1rem 0 3rem;
+    }
+
+    .gen-btn-generate {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.9375rem 2rem;
+      background: linear-gradient(to right, var(--violet), #d946ef);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(147, 51, 234, 0.22);
+    }
+    .gen-btn-generate:hover {
+      box-shadow: 0 8px 30px rgba(147, 51, 234, 0.38);
+      transform: translateY(-1px);
+    }
+    .gen-btn-generate:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .gen-btn-clear {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.9375rem 1.5rem;
+      background: transparent;
+      color: var(--cream-dim);
+      border: 1px solid var(--border);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .gen-btn-clear:hover {
+      border-color: var(--gold-dim);
+      color: var(--cream);
+    }
+
+    .gen-status {
+      text-align: center;
+      font-size: 0.875rem;
+      min-height: 1.5em;
+    }
+    .gen-status.success { color: #10b981; }
+    .gen-status.error { color: #ef4444; }
+
+    /* Preview pane */
+    .gen-preview-wrap {
+      max-width: 720px;
+      margin: 0 auto 3rem;
+      display: none;
+    }
+    .gen-preview-wrap.visible { display: block; }
+    .gen-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .gen-preview-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--cream);
+    }
+    .gen-preview {
+      background: #fff;
+      color: #111;
+      border-radius: 8px;
+      padding: 2.5rem 2rem;
+      font-family: 'Georgia', serif;
+      font-size: 0.875rem;
+      line-height: 1.8;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .gen-preview h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: #111;
+    }
+    .gen-preview .preview-creator {
+      font-size: 0.8125rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    .gen-preview .preview-tag {
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #6B3FA0;
+      margin-bottom: 1.5rem;
+    }
+    .gen-preview .preview-body {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .gen-preview .preview-footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #ddd;
+      text-align: center;
+      font-size: 0.6875rem;
+      color: #999;
+    }
+
+    /* Word count */
+    .gen-wordcount {
+      font-size: 0.6875rem;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 0.25rem;
+    }
+  </style>
+  <script defer data-domain="forbiddengnosis.com" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="./index.html" class="nav-brand" aria-label="Forbidden Gnosis — Home">
+        <svg class="nav-eye" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#D4A853" stroke-width="1" opacity="0.3"/>
+          <path d="M10 50 Q30 20 50 20 Q70 20 90 50 Q70 80 50 80 Q30 80 10 50Z" fill="none" stroke="#D4A853" stroke-width="1.5" opacity="0.8"/>
+          <circle cx="50" cy="50" r="12" fill="none" stroke="#D4A853" stroke-width="1.5"/>
+          <circle cx="50" cy="50" r="5" fill="#D4A853"/>
+        </svg>
+        <span class="nav-brand-name">Forbidden Gnosis</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" role="list">
+        <li><a href="./artifacts.html">Archive</a></li>
+        <li><a href="./manifesto.html">Manifesto</a></li>
+        <li><a href="./creators.html">Creators</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="./index.html#waitlist">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- HERO -->
+    <div class="gen-hero fade-down">
+      <p class="label mb-2">Creator Tool</p>
+      <h1 class="text-grad-gold">Artifact Generator</h1>
+      <p>Paste your AI conversation or insight text below. We'll format it into a Forbidden Gnosis-branded knowledge artifact and generate a PDF you can download.</p>
+    </div>
+
+    <div class="divider fade-in delay-1">
+      <span class="divider-text">Create Your Artifact</span>
+    </div>
+
+    <!-- FORM -->
+    <div class="gen-form fade-up delay-1">
+
+      <div class="gen-field">
+        <label class="gen-label" for="genTitle">Artifact Title</label>
+        <input type="text" id="genTitle" class="gen-input" placeholder="e.g. The Consciousness Problem: A Framework for the AI Age" maxlength="200">
+      </div>
+
+      <div class="gen-row">
+        <div class="gen-field">
+          <label class="gen-label" for="genCreator">Creator Name</label>
+          <input type="text" id="genCreator" class="gen-input" placeholder="Your name or alias" maxlength="100">
+        </div>
+        <div class="gen-field">
+          <label class="gen-label" for="genCategory">Category</label>
+          <select id="genCategory" class="gen-select">
+            <option value="">Select category</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="gen-field">
+        <label class="gen-label" for="genDescription">Short Description</label>
+        <input type="text" id="genDescription" class="gen-input" placeholder="One-line description of the artifact" maxlength="300">
+      </div>
+
+      <div class="gen-field">
+        <label class="gen-label" for="genBody">Artifact Content</label>
+        <p class="gen-hint">Paste your AI conversation, framework, theory, or insight text. Line breaks will be preserved. Use blank lines to separate sections.</p>
+        <textarea id="genBody" class="gen-textarea" placeholder="Paste your AI conversation or knowledge content here..."></textarea>
+        <p id="wordCount" class="gen-wordcount">0 words</p>
+      </div>
+
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="gen-actions fade-up delay-2">
+      <button type="button" id="previewBtn" class="btn btn-ghost">Preview</button>
+      <button type="button" id="generateBtn" class="gen-btn-generate">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Generate PDF
+      </button>
+      <button type="button" id="clearBtn" class="gen-btn-clear">Clear</button>
+    </div>
+
+    <p id="genStatus" class="gen-status" role="status" aria-live="polite"></p>
+
+    <!-- PREVIEW PANE -->
+    <div id="previewWrap" class="gen-preview-wrap">
+      <div class="gen-preview-header">
+        <p class="gen-preview-title">Preview</p>
+      </div>
+      <div id="previewPane" class="gen-preview"></div>
+    </div>
+
+  </div><!-- /page -->
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-main">
+      <div>
+        <span class="footer-brand-name">Forbidden Gnosis</span>
+        <span class="footer-tagline">The Archive of Human–AI Knowledge</span>
+        <p class="footer-brand-desc">A digital marketplace and archive for knowledge artifacts discovered through human–AI collaboration.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="./artifacts.html">Archive</a></li>
+            <li><a href="./manifesto.html">Manifesto</a></li>
+            <li><a href="./creators.html">Creators</a></li>
+            <li><a href="./index.html#waitlist">Join Waitlist</a></li>
+            <li><a href="./create.html">Create Artifact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="./terms.html">Terms</a></li>
+            <li><a href="./privacy.html">Privacy</a></li>
+            <li><a href="./refunds.html">Refunds</a></li>
+            <li><a href="./disclaimer.html">Disclaimer</a></li>
+            <li><a href="./affiliates.html">Affiliates</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">&copy; 2026 House of Terravian. All Rights Reserved.</p>
+      <div class="footer-domains">
+        <a href="https://ForbiddenGnosis.com" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.com</a>
+        <span class="sep">&middot;</span>
+        <a href="https://ForbiddenGnosis.io" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.io</a>
+        <span class="sep">&middot;</span>
+        <a href="https://ForbiddenGnosis.app" target="_blank" rel="noopener noreferrer">ForbiddenGnosis.app</a>
+      </div>
+      <p class="footer-noo">
+        Part of the <span class="grad-gold">Noo World OS</span> &mdash;
+        powered by <span class="grad-pink">Noo World Login</span> and
+        <span class="grad-blue">Noo World Platforms</span>.
+      </p>
+    </div>
+  </footer>
+
+  <script src="./data/creators.js"></script>
+  <script src="./script.js" defer></script>
+
+  <!-- jsPDF from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ── ELEMENTS ── */
+      var titleInput   = document.getElementById('genTitle');
+      var creatorInput = document.getElementById('genCreator');
+      var categorySel  = document.getElementById('genCategory');
+      var descInput    = document.getElementById('genDescription');
+      var bodyArea     = document.getElementById('genBody');
+      var wordCountEl  = document.getElementById('wordCount');
+      var previewBtn   = document.getElementById('previewBtn');
+      var generateBtn  = document.getElementById('generateBtn');
+      var clearBtn     = document.getElementById('clearBtn');
+      var statusEl     = document.getElementById('genStatus');
+      var previewWrap  = document.getElementById('previewWrap');
+      var previewPane  = document.getElementById('previewPane');
+
+      /* ── POPULATE CATEGORIES ── */
+      if (window.FG_CATEGORIES) {
+        window.FG_CATEGORIES.forEach(function (cat) {
+          var opt = document.createElement('option');
+          opt.value = cat.id;
+          opt.textContent = cat.label;
+          categorySel.appendChild(opt);
+        });
+      }
+
+      /* ── WORD COUNT ── */
+      bodyArea.addEventListener('input', function () {
+        var words = this.value.trim().split(/\s+/).filter(Boolean).length;
+        wordCountEl.textContent = words + ' word' + (words !== 1 ? 's' : '');
+      });
+
+      /* ── VALIDATION ── */
+      function validate() {
+        if (!titleInput.value.trim()) { showStatus('error', 'Please enter an artifact title.'); titleInput.focus(); return false; }
+        if (!creatorInput.value.trim()) { showStatus('error', 'Please enter a creator name.'); creatorInput.focus(); return false; }
+        if (!bodyArea.value.trim()) { showStatus('error', 'Please paste your artifact content.'); bodyArea.focus(); return false; }
+        return true;
+      }
+
+      function showStatus(type, msg) {
+        statusEl.className = 'gen-status ' + type;
+        statusEl.textContent = msg;
+      }
+
+      function getFormData() {
+        return {
+          title:       titleInput.value.trim(),
+          creator:     creatorInput.value.trim(),
+          category:    categorySel.options[categorySel.selectedIndex] ? categorySel.options[categorySel.selectedIndex].text : '',
+          categoryId:  categorySel.value,
+          description: descInput.value.trim(),
+          body:        bodyArea.value.trim()
+        };
+      }
+
+      /* ── PREVIEW ── */
+      function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      previewBtn.addEventListener('click', function () {
+        if (!validate()) return;
+        var d = getFormData();
+        previewPane.innerHTML =
+          '<div class="preview-tag">' + escHtml(d.category || 'Knowledge Artifact') + '</div>' +
+          '<h1>' + escHtml(d.title) + '</h1>' +
+          '<p class="preview-creator">By ' + escHtml(d.creator) + '</p>' +
+          (d.description ? '<p style="font-style:italic;color:#666;margin-bottom:1.5rem;">' + escHtml(d.description) + '</p>' : '') +
+          '<div class="preview-body">' + escHtml(d.body) + '</div>' +
+          '<div class="preview-footer">' +
+            'Published through Forbidden Gnosis &mdash; The Archive of Human\u2013AI Knowledge<br>' +
+            'forbiddengnosis.com &middot; &copy; ' + new Date().getFullYear() + ' House of Terravian' +
+          '</div>';
+        previewWrap.classList.add('visible');
+        previewWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showStatus('', '');
+      });
+
+      /* ── PDF GENERATION ── */
+      generateBtn.addEventListener('click', function () {
+        if (!validate()) return;
+        if (typeof window.jspdf === 'undefined') {
+          showStatus('error', 'PDF library is still loading. Please try again in a moment.');
+          return;
+        }
+
+        generateBtn.disabled = true;
+        showStatus('', 'Generating PDF\u2026');
+
+        var d = getFormData();
+
+        try {
+          var jsPDF = window.jspdf.jsPDF;
+          var doc = new jsPDF({ unit: 'mm', format: 'a4' });
+
+          var pageW  = doc.internal.pageSize.getWidth();
+          var pageH  = doc.internal.pageSize.getHeight();
+          var marginL = 25;
+          var marginR = 25;
+          var contentW = pageW - marginL - marginR;
+          var y = 30;
+
+          /* ── COVER PAGE ── */
+
+          // Eye sigil (gold circle approximation)
+          doc.setDrawColor(212, 168, 83);
+          doc.setLineWidth(0.3);
+          doc.circle(pageW / 2, y + 8, 6);
+          doc.circle(pageW / 2, y + 8, 2.5);
+          doc.setFillColor(212, 168, 83);
+          doc.circle(pageW / 2, y + 8, 1, 'F');
+          y += 24;
+
+          // Category tag
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(8);
+          doc.setTextColor(107, 63, 160);
+          doc.text((d.category || 'KNOWLEDGE ARTIFACT').toUpperCase(), pageW / 2, y, { align: 'center' });
+          y += 10;
+
+          // Title
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(26);
+          doc.setTextColor(17, 17, 17);
+          var titleLines = doc.splitTextToSize(d.title, contentW);
+          doc.text(titleLines, pageW / 2, y, { align: 'center' });
+          y += titleLines.length * 10 + 6;
+
+          // Creator
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(11);
+          doc.setTextColor(100, 100, 100);
+          doc.text('By ' + d.creator, pageW / 2, y, { align: 'center' });
+          y += 8;
+
+          // Description
+          if (d.description) {
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(10);
+            doc.setTextColor(120, 120, 120);
+            var descLines = doc.splitTextToSize(d.description, contentW - 20);
+            doc.text(descLines, pageW / 2, y, { align: 'center' });
+            y += descLines.length * 5 + 6;
+          }
+
+          // Divider line
+          y += 4;
+          doc.setDrawColor(212, 168, 83);
+          doc.setLineWidth(0.3);
+          doc.line(marginL + 20, y, pageW - marginR - 20, y);
+          y += 8;
+
+          // Date
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(8);
+          doc.setTextColor(150, 150, 150);
+          var dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+          doc.text(dateStr, pageW / 2, y, { align: 'center' });
+          y += 6;
+
+          doc.text('Published through Forbidden Gnosis', pageW / 2, y, { align: 'center' });
+          y += 4;
+          doc.text('The Archive of Human\u2013AI Knowledge', pageW / 2, y, { align: 'center' });
+
+          /* ── CONTENT PAGES ── */
+          doc.addPage();
+          y = 25;
+
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          doc.setTextColor(30, 30, 30);
+
+          var paragraphs = d.body.split(/\n\n+/);
+          for (var p = 0; p < paragraphs.length; p++) {
+            var para = paragraphs[p].trim();
+            if (!para) continue;
+
+            var lines = doc.splitTextToSize(para, contentW);
+
+            // Check if we need a new page
+            var blockHeight = lines.length * 5;
+            if (y + blockHeight > pageH - 25) {
+              // Footer on current page
+              addFooter(doc, pageW, pageH);
+              doc.addPage();
+              y = 25;
+            }
+
+            doc.text(lines, marginL, y);
+            y += blockHeight + 4;
+          }
+
+          // Footer on last page
+          addFooter(doc, pageW, pageH);
+
+          /* ── DOWNLOAD ── */
+          var filename = d.title.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '')
+            .slice(0, 60);
+          doc.save(filename + '.pdf');
+
+          showStatus('success', 'PDF generated and downloaded!');
+
+          if (window.FG && window.FG.track) {
+            window.FG.track('artifact_generated', { title: d.title, category: d.categoryId });
+          }
+
+        } catch (err) {
+          showStatus('error', 'PDF generation failed: ' + err.message);
+        }
+
+        generateBtn.disabled = false;
+      });
+
+      function addFooter(doc, pageW, pageH) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7);
+        doc.setTextColor(180, 180, 180);
+        doc.setDrawColor(212, 168, 83);
+        doc.setLineWidth(0.2);
+        doc.line(25, pageH - 18, pageW - 25, pageH - 18);
+        doc.text('Published through Forbidden Gnosis \u2014 The Archive of Human\u2013AI Knowledge \u2014 forbiddengnosis.com', pageW / 2, pageH - 13, { align: 'center' });
+        doc.text('\u00a9 ' + new Date().getFullYear() + ' House of Terravian. All Rights Reserved.', pageW / 2, pageH - 9, { align: 'center' });
+      }
+
+      /* ── CLEAR ── */
+      clearBtn.addEventListener('click', function () {
+        titleInput.value   = '';
+        creatorInput.value = '';
+        categorySel.value  = '';
+        descInput.value    = '';
+        bodyArea.value     = '';
+        wordCountEl.textContent = '0 words';
+        previewWrap.classList.remove('visible');
+        showStatus('', '');
+        titleInput.focus();
+      });
+
+    })();
+  </script>
+</body>
+</html>
